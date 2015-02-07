@@ -1,0 +1,48 @@
+---
+name: MyTestWorkFlow1
+input_spec: ... # JSON schema input validation
+
+steps:
+- name: MyStep1
+  activity: MyAct1
+  requires: []
+  input: |
+      Some input
+
+- name: MyStep2
+  activity: MyAct1
+  requires: []
+  input: "foo"
+
+- name: MyStep3
+  activity: MyAct2
+  requires:
+  - [ MyStep1, 'success' ]
+  - [ MyStep2, 'complete' ] # Step2 can succeed or fail
+  input: |
+      Some crazy template
+
+activities:
+- name: MyAct1  # Activity name in SWF
+  input_spec: '' # JSON schema input
+  output_specs: # YAQL data extraction
+    key1: "YAQL on output"
+    key2: "YAQL on output"
+    key3: "YAQL on output"
+  # Other SWF Attribute here
+
+- name: MyAct2  # Activity name in SWF
+  input_spec: '' # JSON schema input
+  output_specs: # YAQL data extraction
+    key1: YAQL on output
+    key2: YAQL on output
+    key3: YAQL on output
+  # Other SWF Attribute here
+
+- name: MyAct3  # Activity name in SWF
+  input_spec: '' # JSON schema input
+  output_specs: # YAQL data extraction
+    key1: YAQL on output
+    key2: YAQL on output
+    key3: YAQL on output
+  # Other SWF Attribute here

@@ -1,0 +1,19 @@
+---
+name: HelloWorkFlow     # WF name in SWF
+input_spec: ""          # ... # JSON schema input validation
+
+steps:
+- name: "saying_hi"
+  activity: "HelloWorld"
+  requires: []
+  input: ""
+- name: "saying_hi_again"
+  activity: "HelloWorld"
+  requires: ["saying_hi"]
+  input: ""
+
+activities:
+- name: "HelloWorld"      # Activity name in SWF
+  version: "1.0"
+  input_spec: ""
+  outputs_spec: ~

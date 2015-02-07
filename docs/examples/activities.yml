@@ -1,0 +1,17 @@
+---
+activities:
+- name: MyAct1  # Activity name in SWF
+  input_spec: '' # JSON schema input
+  outputs_spec: # YAQL data extraction
+    key1: "$.foo.bar.baz"
+    key2: "$.foo.bar2"
+    key3: "$.foo.baz"
+  failure_count: 3
+
+- name: MyAct2  # Activity name in SWF
+  input_spec: '' # JSON schema input
+  output_specs: # YAQL data extraction
+    key1: YAQL on output
+    key2: YAQL on output
+    key3: YAQL on output
+  failure_count: 3
