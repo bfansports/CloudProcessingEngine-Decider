@@ -1,0 +1,2 @@
+testrepository >= 0.0.18
+mock >= 1.0

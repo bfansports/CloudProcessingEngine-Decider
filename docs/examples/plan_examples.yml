@@ -1,0 +1,110 @@
+---
+plan:
+  name: MyWorkFlow  # WF name in SWF
+  input_spec: ... # JSON schema input validation
+
+  steps:
+  - name: MyStep1
+    activity: MyAct1
+    parents: []
+    input: |
+        Some input
+
+  - name: MyStep2      
+    activity: MyAct1
+    parents: []
+    input: "foo"
+
+  - name: MyStep3
+    activity: MyAct2
+    parents:
+    - [ MyStep1, 'complete' ]
+    - [ MyStep2, 'complete' ]
+    input: |
+        Some crazy template
+
+  activities:
+  - name: MyAct1  # Activity name in SWF
+    input_spec: '' # JSON schema input
+    output_specs: # YAQL data extraction
+    - key1: "YAQL on output"
+    - key2: "YAQL on output"
+    - key3: "YAQL on output"
+    failure_count: 3
+
+  - name: MyAct2  # Activity name in SWF
+    input_spec: '' # JSON schema input
+    output_specs: # YAQL data extraction
+    - key1: YAQL on output
+    - key2: YAQL on output
+    - key3: YAQL on output
+    failure_count: 3
+
+
+---
+plan:
+  name: MyWorkFlow  # WF name in SWF
+  input_spec: ... # JSON schema input validation
+
+  steps:
+  - name: MyStep1
+    activity: MyAct1
+    parents: []
+    input: |
+        Some input
+
+  - name: MyStep2      
+    activity: MyAct1
+    parents: []
+    input: "foo"
+
+  - name: MyStep3
+    parents: []
+    eval: |
+        [
+            (
+                Step(name='say', requires=[],
+                     activity='MyActivity',
+                     input=value),
+                Step(name='what?', requires=['say'],
+                     activity='MyActivity',
+                     input=value),
+                Step(name='what??', requires=['what?'],
+                     activity='MyActivity',
+                     input=value)
+            )
+            for value in input
+        ]
+
+  activities:
+  - name: MyAct1  # Activity name in SWF
+    input_spec: '' # JSON schema input
+    output_specs: # YAQL data extraction
+    - key1: "YAQL on output"
+    - key2: "YAQL on output"
+    - key3: "YAQL on output"
+    failure_count: 3
+
+  - name: MyAct2  # Activity name in SWF
+    input_spec: '' # JSON schema input
+    output_specs: # YAQL data extraction
+    - key1: YAQL on output
+    - key2: YAQL on output
+    - key3: YAQL on output
+    failure_count: 3
+    decision: |
+      [
+          (
+              Step(name='foo', requires=['say'],
+                   activity='MyAct3',
+                   input="""
+                      ---
+                      my: 'toto'
+                      stuff: "{{value.['something']}}"
+                      more:
+                        structured:
+                          stuff: 'possible'
+                   """),
+          )
+          for value in output
+      ]
