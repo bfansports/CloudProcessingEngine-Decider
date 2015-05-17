@@ -5,6 +5,11 @@ import logging
 
 import jinja2
 
+from .step_results import (
+    ActivityStepResult,
+    TemplatedStepResult,
+)
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -23,8 +28,8 @@ class Step(object):
 
     def __init__(self, name, requires=()):
         self.name = name
-        self.requires = [self._resolve_parent(parent_def)
-                         for parent_def in requires]
+        self.requires = dict([self._resolve_parent(parent_def)
+                              for parent_def in requires])
 
     @staticmethod
     def _resolve_parent(parent_def):
@@ -89,10 +94,16 @@ class ActivityStep(Step):
     def __init__(self, name, activity, input_template, requires=()):
         super(ActivityStep, self).__init__(name, requires)
         self.activity = activity
-        self.input_template = jinja2.Template(input_template)
+        if input_template is not None:
+            self.input_template = jinja2.Template(input_template)
+        else:
+            self.input_template = None
 
     def prepare(self, context):
-        return self.input_template.render(context)
+        if self.input_template is not None:
+            return self.input_template.render(context)
+        else:
+            return None
 
     def run(self, step_input):
         return ActivityStepResult(
@@ -103,16 +114,6 @@ class ActivityStep(Step):
 
     def render(self, output):
         return self.activity.render_output(output)
-
-
-class ActivityStepResult(object):
-
-    __slots__ = ('name', 'activity', 'activity_input')
-
-    def __init__(self, name, activity, activity_input):
-        self.name = name
-        self.activity = activity
-        self.activity_input = activity_input
 
 
 class TemplatedStep(Step):
@@ -127,7 +128,7 @@ class TemplatedStep(Step):
         return self.eval_block.render(context)
 
     def run(self, step_input):
-        pass
+        return TemplatedStepResult()
 
     def render(self, _output):
         # NOTE: Templated steps do not have any usable attributes
