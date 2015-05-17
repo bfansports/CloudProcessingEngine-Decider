@@ -1,16 +1,16 @@
 ---
 name: HelloWorkFlow     # WF name in SWF
-input_spec: ""          # ... # JSON schema input validation
+input_spec: ~           # ... # JSON schema input validation
 
 steps:
 - name: "saying_hi"
   activity: "HelloWorld"
   requires: []
-  input: ""
+  input: ~
 - name: "saying_hi_again"
   activity: "HelloWorld"
   requires: ["saying_hi"]
-  input: ""
+  input: ~
 
 activities:
 - name: "HelloWorld"      # Activity name in SWF
