@@ -17,7 +17,7 @@ sys.path.append(
 )
 
 from ct.register import register
-from ct.decider import Decider
+from ct.swf_decider import SWFDecider as Decider
 from ct.workspace import Plan
 
 
