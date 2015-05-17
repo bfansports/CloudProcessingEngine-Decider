@@ -37,6 +37,13 @@ class StateStatus(enum.Enum):
     running = 1
     #: All Steps are in the completed status or one was aborted.
     completed = 2
+    #: All steps completed as successful.
+    succeeded = completed | 4
+    #: Step completed in failure.
+    failed = completed | 8
+
+    def means(self, status):
+        return (self.value & status.value) == status.value
 
 
 class State(object):
@@ -59,7 +66,7 @@ class State(object):
                                     status='running',
                                     context='__init__')
         self._end_step = StepState(step=DeciderStep(END_STEP,
-                                   requires=[INIT_STEP]),
+                                   requires=[INIT_STEP, 'completed']),
                                    context='__init__')
         self._stepstate_insert(self._init_step)
         self._stepstate_insert(self._end_step)
@@ -72,9 +79,9 @@ class State(object):
         )
 
     #################################################
-    @property
-    def is_completed(self):
-        return self.status is StateStatus.completed
+    def is_in_state(self, state_name):
+        desired_state = getattr(StateStatus, state_name)
+        return self.status.means(desired_state)
 
     #################################################
     # Context management
@@ -125,6 +132,9 @@ class State(object):
             # FIXME: Could be optimized so that only steps without children are
             #        parented to END_STEP
             self._end_step.parents.add(step_state)
+            self._end_step.step.requires[step_state.step.name] = \
+                StepStateStatus.completed
+
             step_state.children.add(self._end_step)
             # See if we can re-parents some previously orphaned Step with the
             # one we have just added.
@@ -146,18 +156,18 @@ class State(object):
             hint_step = self.step_states[hint]
 
             # Check that this is completed
-            if not hint_step.status.is_completed:
+            if not hint_step.is_completed:
                 # FIXME: This should be an error
                 return set()
 
-            for child_step in hint_step.children:
-                if child_step.is_ready:
-                    ready_steps.add(child_step)
+            for child in hint_step.children:
+                if child.status is StepStateStatus.ready:
+                    ready_steps.add(child)
 
         else:
             # Walk the whole tree collecting ready StepState
             for child in self._init_step.children:
-                if child.is_ready:
+                if child.status is StepStateStatus.ready:
                     ready_steps.add(child)
                 else:
                     child_name = child.step.name
@@ -174,10 +184,10 @@ class State(object):
             return True
 
         elif all([required in self.step_states
-                  for (required, _) in step_state.step.requires]):
+                  for required in step_state.step.requires.keys()]):
             # All the required steps are defined, update their children set and
             # record them in this step_state's parents set
-            for (required, _) in step_state.step.requires:
+            for required in step_state.step.requires.keys():
                 self.step_states[required].children.add(step_state)
                 step_state.parents.add(self.step_states[required])
 
@@ -187,7 +197,7 @@ class State(object):
         else:
             # We failed to insert this step_state
             # Parent steps are missing, set it as orphaned
-            for (required, _) in step_state.step.requires:
+            for required in step_state.step.requires.keys():
                 if required not in self.step_states:
                     self._orphaned_steps.setdefault(
                         required, set()
@@ -215,11 +225,8 @@ class StepStateStatus(enum.Enum):
     #: Step was skipped (will not be run).
     skipped = completed | 64
 
-    @property
-    def is_completed(self):
-        """`True` if the status is either `succeeded`, `failed` or `skipped`.
-        """
-        return bool(self.value & self.__class__.completed.value)
+    def means(self, status):
+        return (self.value & status.value) == status.value
 
 
 class StepState(object):
@@ -261,6 +268,12 @@ class StepState(object):
     def name(self):
         return self.step.name
 
+    @property
+    def is_completed(self):
+        """`True` if the status is either `succeeded`, `failed` or `skipped`.
+        """
+        return self.status.means(StepStateStatus.completed)
+
     def _prepare(self):
         """Prepare the input from the step input template and the parents data.
         """
@@ -284,19 +297,39 @@ class StepState(object):
         attrs = self.step.render(output)
         self.attrs = attrs
 
-    @property
-    def is_ready(self):
+    def check_requirements(self, context):
         """`True` if the Step is ready to be evaluated.
 
         This means the step hasn't ran yet and all its parents are completed.
         """
         if self.status is StepStateStatus.ready:
-            return True
+            return
         # You cannot be ready if you are already completed/aborted
         if self.status is not StepStateStatus.pending:
-            return False
-        # Check that all our parents are completed
-        return all([parent.status.is_completed for parent in self.parents])
+            return
+
+        # Check that all our parents are completed per the step's requirements.
+        _LOGGER.debug('Step %r requirements %r', self, self.step.requires)
+
+        ready = True
+        for parent in self.parents:
+            if not parent.is_completed:
+                ready = False
+                continue
+
+            assert(parent.name in self.step.requires)
+
+            req_status = self.step.requires[parent.name]
+            _LOGGER.debug('Checking parent %r meets requirement %r',
+                          parent, req_status)
+
+            if not parent.status.means(req_status):
+                self.update('aborted', context)
+                break
+
+        else:
+            if ready:
+                self.update('ready', context)
 
     def update(self, new_status, context, new_output=None):
         if not isinstance(new_status, StepStateStatus):
@@ -310,11 +343,11 @@ class StepState(object):
             self.input = self._prepare()
         elif self.status is StepStateStatus.running:
             pass
-        elif self.status.is_completed:
+        elif self.is_completed:
             self._record(new_output)
             for child in self.children:
-                if child.is_ready:
-                    child.update(StepStateStatus.ready, context)
+                child.check_requirements(context)
+
         else:
             # FIXME: cleanup
             raise Exception('Invalid update')
