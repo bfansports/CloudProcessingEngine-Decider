@@ -61,6 +61,10 @@ docs/_build/
 # PyBuilder
 target/
 
+# Vagrant
+.vagrant/
+
+.env*
 !.gitignore
 !.travis.yml
 !.keepme
