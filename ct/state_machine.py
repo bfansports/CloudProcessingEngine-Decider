@@ -48,6 +48,8 @@ class StateMachine(object):
 
     ###########################################################################
     def _run_event(self, event):
+        """Process a given event and return a list of results.
+        """
         _LOGGER.debug('Processing event %r', event['eventType'])
 
         handler_fun = getattr(
@@ -86,19 +88,13 @@ class StateMachine(object):
             # Import all predefined steps from the plan
             for step in self.plan.steps:
                 self.state.step_insert(step)
-        # No sideeffects
-        return []
 
     def __ev_skip(_self, event):
         _LOGGER.info('Skipping event: %r', event['eventType'])
-        # No sideeffects
-        return []
 
-    def __ev_abort(_self, event):
-        _LOGGER.warning('Unknown event: %r', event)
-        # No sideeffects
+    def __ev_abort(self, event):
         # FIXME: Should abort the workflow
-        return []
+        _LOGGER.error('Unknown event: %r', event)
 
     def __ev_start(self, event):
         """Import input data"""
@@ -118,10 +114,6 @@ class StateMachine(object):
             # Set the input
             self.state.set_input(input_data)
 
-        return [
-            ('new_ready_steps', ()),
-        ]
-
     def __ev_scheduled(self, event):
         """Record the eventId associated with activities we scheduled."""
         _LOGGER.debug('%r', event)
@@ -135,8 +127,6 @@ class StateMachine(object):
                       step_name, event_id)
         self._event_ids[event_id] = step_name
 
-        return []
-
     def __ev_completed(self, event):
         _LOGGER.debug('%r', event)
         output = event['activityTaskCompletedEventAttributes'].get('result')
@@ -145,10 +135,6 @@ class StateMachine(object):
         step_name = self._event_ids[sched_event_id]
         with self.state(event):
             self.state.step_update(step_name, 'succeeded', output)
-
-        return [
-            ('new_ready_steps', ()),
-        ]
 
     EVENT_PlanLoad = __ev_load
     EVENT_WorkflowExecutionStarted = __ev_start
