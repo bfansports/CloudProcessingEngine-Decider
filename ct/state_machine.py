@@ -1,9 +1,7 @@
 from __future__ import absolute_import
 
 import logging
-import copy
-
-import yaml
+import json
 
 from .state import State
 from .step_results import (
@@ -84,7 +82,7 @@ class StateMachine(object):
     # Events and handlers
     def __ev_load(self, event):
         # Create loading time steps from the plan
-        with self.state(event):
+        with self.state(event['eventId']):
             # Import all predefined steps from the plan
             for step in self.plan.steps:
                 self.state.step_insert(step)
@@ -94,25 +92,26 @@ class StateMachine(object):
 
     def __ev_abort(self, event):
         _LOGGER.error('Unknown event: %r', event)
-        with self.state(event):
+        with self.state(event['eventId']):
             # Set the input
             self.state.set_abort()
 
     def __ev_start(self, event):
         """Import input data"""
         _LOGGER.debug('%r', event)
+        start_attrs = event['workflowExecutionStartedEventAttributes']
         # Note that if no input was provided, the 'input' key will not be there
-        event_input = event.get('input', '')
+        wf_input = start_attrs.get('input', '{}')
         try:
-            input_data = yaml.load(event_input) or {}
-        except yaml.error.YAMLError:
-            _LOGGER.exception('Invalid workflow input: %r', event_input)
-            raise
+            input_data = json.loads(wf_input)
+        except ValueError:
+            _LOGGER.exception('Invalid workflow input: %r', wf_input)
+            # We cannot do anything, just abort
+            with self.state(event['eventId']):
+                self.state.set_abort()
+            return
 
-        state_event = copy.copy(event)
-        state_event['input'] = input_data
-
-        with self.state(state_event):
+        with self.state(event['eventId']):
             # Set the input
             self.state.set_input(input_data)
 
@@ -122,7 +121,7 @@ class StateMachine(object):
         step_name = event['activityTaskScheduledEventAttributes']['activityId']
         event_id = event['eventId']
 
-        with self.state(event):
+        with self.state(event['eventId']):
             self.state.step_update(step_name, 'running')
 
         _LOGGER.debug('Associating step %r with event_id %r',
@@ -135,7 +134,7 @@ class StateMachine(object):
         sched_event_attr = event['activityTaskCompletedEventAttributes']
         sched_event_id = sched_event_attr['scheduledEventId']
         step_name = self._event_ids[sched_event_id]
-        with self.state(event):
+        with self.state(event['eventId']):
             self.state.step_update(step_name, 'succeeded', output)
 
     EVENT_PlanLoad = __ev_load
