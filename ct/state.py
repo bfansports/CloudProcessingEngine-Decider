@@ -66,7 +66,7 @@ class State(object):
                                     status='running',
                                     context='__init__')
         self._end_step = StepState(step=DeciderStep(END_STEP,
-                                   requires=[INIT_STEP, 'completed']),
+                                   requires=[(INIT_STEP, 'completed')]),
                                    context='__init__')
         self._stepstate_insert(self._init_step)
         self._stepstate_insert(self._end_step)
@@ -324,7 +324,7 @@ class StepState(object):
                           parent, req_status)
 
             if not parent.status.means(req_status):
-                self.update('aborted', context)
+                self.update('skipped', context)
                 break
 
         else:
