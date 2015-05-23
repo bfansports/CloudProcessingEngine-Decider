@@ -6,7 +6,6 @@ events:
   workflowExecutionStartedEventAttributes:
     childPolicy: TERMINATE
     executionStartToCloseTimeout: '3600'
-    input: ''
     parentInitiatedEventId: 0
     taskList: {name: default}
     taskStartToCloseTimeout: '300'
