@@ -93,8 +93,10 @@ class StateMachine(object):
         _LOGGER.info('Skipping event: %r', event['eventType'])
 
     def __ev_abort(self, event):
-        # FIXME: Should abort the workflow
         _LOGGER.error('Unknown event: %r', event)
+        with self.state(event):
+            # Set the input
+            self.state.set_abort()
 
     def __ev_start(self, event):
         """Import input data"""
