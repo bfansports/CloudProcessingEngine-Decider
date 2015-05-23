@@ -58,6 +58,13 @@ class DeciderTest(unittest.TestCase):
         self.assertTrue(self.statemachine.state.is_in_state('failed'))
         self.assertEquals([], results)
 
+    def test_workflow_invalid_input_abort(self):
+        myevents = copy.deepcopy(self.events[:3])
+        myevents[0]['eventType'] = 'Foo'
+        results = self.statemachine.eval(myevents[:3])
+        self.assertTrue(self.statemachine.state.is_in_state('failed'))
+        self.assertEquals([], results)
+
     def test_workflow_first_completed(self):
         results = self.statemachine.eval(self.events[:13])
         self.assertTrue(self.statemachine.state.is_in_state('running'))
@@ -73,4 +80,6 @@ class DeciderTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
     unittest.main()
