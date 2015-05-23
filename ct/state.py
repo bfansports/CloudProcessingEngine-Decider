@@ -66,7 +66,7 @@ class State(object):
                                     status='running',
                                     context='__init__')
         self._end_step = StepState(step=DeciderStep(END_STEP,
-                                   requires=[INIT_STEP, 'completed']),
+                                   requires=[(INIT_STEP, 'completed')]),
                                    context='__init__')
         self._stepstate_insert(self._init_step)
         self._stepstate_insert(self._end_step)
@@ -101,6 +101,10 @@ class State(object):
 
     #################################################
     # State manipulations
+    def set_abort(self):
+        assert(self._context is not None)
+        self.step_update(END_STEP, 'aborted')
+
     def set_input(self, input_data):
         assert(self._context is not None)
         assert(self.status is StateStatus.init)
@@ -119,6 +123,8 @@ class State(object):
 
         if self._end_step.status is StepStateStatus.ready:
             self.status = StateStatus.completed
+        elif self._end_step.status is StepStateStatus.aborted:
+            self.status = StateStatus.failed
 
     def step_insert(self, step):
         """Add a step definition to the state.
@@ -324,7 +330,7 @@ class StepState(object):
                           parent, req_status)
 
             if not parent.status.means(req_status):
-                self.update('aborted', context)
+                self.update('skipped', context)
                 break
 
         else:
@@ -347,7 +353,9 @@ class StepState(object):
             self._record(new_output)
             for child in self.children:
                 child.check_requirements(context)
-
+        elif self.status is StepStateStatus.aborted:
+            # The workflow will abort, nothing else to do
+            pass
         else:
             # FIXME: cleanup
             raise Exception('Invalid update')

@@ -14,6 +14,7 @@ sys.path.append(
     )
 )
 
+import copy
 import mock
 import yaml
 
@@ -49,6 +50,13 @@ class DeciderTest(unittest.TestCase):
                 ('saying_hi', self.plan.activities['HelloWorld'], None)
             ]
         )
+
+    def test_workflow_unknown_abort(self):
+        myevents = copy.deepcopy(self.events[:3])
+        myevents[-1]['eventType'] = 'Foo'
+        results = self.statemachine.eval(myevents[:3])
+        self.assertTrue(self.statemachine.state.is_in_state('failed'))
+        self.assertEquals([], results)
 
     def test_workflow_first_completed(self):
         results = self.statemachine.eval(self.events[:13])
