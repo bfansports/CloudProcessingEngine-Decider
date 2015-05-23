@@ -50,6 +50,10 @@ coverage.xml
 # Django stuff:
 *.log
 
+# Managed build system
+AUTHORS
+ChangeLog
+
 # Sphinx documentation
 docs/_build/
 
@@ -57,4 +61,5 @@ docs/_build/
 target/
 
 !.gitignore
+!.travis.yml
 !.keepme
