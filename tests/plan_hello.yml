@@ -15,5 +15,6 @@ steps:
 activities:
 - name: "HelloWorld"      # Activity name in SWF
   version: "1.0"
-  input_spec: ""
+  input_spec:
+    type: "null"
   outputs_spec: ~

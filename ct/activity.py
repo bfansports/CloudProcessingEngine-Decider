@@ -1,5 +1,6 @@
 import logging
 
+import jsonschema
 import yaql
 import yaql.exceptions
 
@@ -30,7 +31,17 @@ class Activity(object):
         self.schedule_to_start_timeout = schedule_to_start_timeout
         self.start_to_close_timeout = start_to_close_timeout
 
-        self.input_spec = None  # FIXME: Compile a JSONSchema
+        if input_spec:
+            try:
+                self.input_spec = jsonschema.Draft4Validator(input_spec)
+            except jsonschema.SchemaError as err:
+                _LOGGER.critical('Invalid JSONSchema in Activity %r: %r',
+                                 name, err)
+                raise
+
+        else:
+            self.input_spec = None
+
         if outputs_spec:
             try:
                 self.outputs_spec = {key: yaql.parse(expr)
@@ -45,6 +56,13 @@ class Activity(object):
 
     def __repr__(self):
         return 'Activity(name={name})'.format(name=self.name)
+
+    def check_input(self, activity_input):
+        if self.input_spec is not None:
+            return self.input_spec.validate(activity_input)
+        else:
+            # No input schema meams we accept everything
+            return True
 
     def render_output(self, output):
         return {
