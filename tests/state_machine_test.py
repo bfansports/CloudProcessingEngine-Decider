@@ -23,7 +23,7 @@ import ct.workspace
 import ct.state_machine
 
 
-class DeciderTest(unittest.TestCase):
+class StateMachineTest(unittest.TestCase):
     MY_DIR = os.path.realpath(os.path.dirname(__file__))
 
     def setUp(self):
