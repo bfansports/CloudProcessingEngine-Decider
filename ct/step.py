@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import abc
+import json
 import logging
 
 import jinja2
@@ -106,7 +107,7 @@ class ActivityStep(Step):
                         'Invalid step %r: Template used %r is not required' %
                         (self.name, tp_var,)
                     )
-            self.input_template = jinja2.Template(input_template)
+            self.input_template = self._make_template(input_template)
         else:
             self.input_template = None
 
@@ -134,6 +135,15 @@ class ActivityStep(Step):
         """
         parsed_template = jinja2.Environment().parse(input_template)
         return jinja2.meta.find_undeclared_variables(parsed_template)
+
+    @staticmethod
+    def _make_template(input_template):
+        def to_json(obj, *args, **kwargs):
+            return json.dumps(obj, indent=4, sort_keys=True, *args, **kwargs)
+
+        env = jinja2.Environment()
+        env.filters['to_json'] = to_json
+        return env.from_string(input_template)
 
 
 class TemplatedStep(Step):
