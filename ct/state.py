@@ -18,14 +18,13 @@ class DeciderStepResult(object):
 
 class DeciderStep(step.Step):
     def run(self, _step_input):
-        return DeciderStepResult(
-            # FIXME
-        )
+        return DeciderStepResult()
 
     def prepare(self, _context):
-        return {}
+        return None
 
     def render(self, output):
+        # The out of the INIT step is the input to the workflow
         return output
 
 
@@ -102,10 +101,14 @@ class State(object):
     #################################################
     # State manipulations
     def set_abort(self):
+        """Abort the state machine.
+        """
         assert(self._context is not None)
         self.step_update(END_STEP, 'aborted')
 
     def set_input(self, input_data):
+        """Set the input of the state machine.
+        """
         assert(self._context is not None)
         assert(self.status is StateStatus.init)
 
@@ -113,7 +116,7 @@ class State(object):
         self.status = StateStatus.running
 
     def step_update(self, step_name, new_status, new_data=None):
-        """Update a Step with new status and/or output data.
+        """Update a Step with new status and, optionally, output data.
         """
         assert(self._context is not None)
         step_state = self.step_states[step_name]
@@ -241,7 +244,6 @@ class StepState(object):
                  'step',
                  'input',
                  'output',
-                 'attrs',
                  'children',
                  'parents',
                  'history',
@@ -257,7 +259,6 @@ class StepState(object):
         self.status = status
         self.input = None
         self.output = None
-        self.attrs = None
         self.children = weakref.WeakSet()
         self.parents = weakref.WeakSet()
         self.history = collections.deque()
@@ -292,16 +293,15 @@ class StepState(object):
         context = {}
         for parent in self.parents:
             if parent.name is INIT_STEP:
-                context.update({'__init__': parent.attrs})
+                context.update({'__input__': parent.output})
             else:
-                context.update({parent.name: parent.attrs})
+                context.update({parent.name: parent.output})
         return context
 
     def _record(self, output):
         """Invoke the step rendering of the results."""
-        self.output = output
         attrs = self.step.render(output)
-        self.attrs = attrs
+        self.output = attrs
 
     def check_requirements(self, context):
         """`True` if the Step is ready to be evaluated.

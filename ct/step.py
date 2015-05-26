@@ -1,9 +1,11 @@
 from __future__ import absolute_import
 
 import abc
+import json
 import logging
 
 import jinja2
+import jinja2.meta
 
 from .step_results import (
     ActivityStepResult,
@@ -95,15 +97,29 @@ class ActivityStep(Step):
         super(ActivityStep, self).__init__(name, requires)
         self.activity = activity
         if input_template is not None:
-            self.input_template = jinja2.Template(input_template)
+            tp_required = self._check_template_dependencies(input_template)
+            for tp_var in tp_required:
+                # `__input__` is a "magic" step referencing the workflow input
+                if tp_var == '__input__':
+                    continue
+                if tp_var not in self.requires:
+                    raise StepDefinitionError(
+                        'Invalid step %r: Template used %r is not required' %
+                        (self.name, tp_var,)
+                    )
+            self.input_template = self._make_template(input_template)
         else:
             self.input_template = None
 
     def prepare(self, context):
         if self.input_template is not None:
-            return self.input_template.render(context)
+            activity_input_json = self.input_template.render(context)
+            # FIXME: We are assuming JSON activity input here
+            activity_input = json.loads(activity_input_json)
         else:
-            return None
+            activity_input = None
+        self.activity.check_input(activity_input)
+        return activity_input
 
     def run(self, step_input):
         return ActivityStepResult(
@@ -114,6 +130,22 @@ class ActivityStep(Step):
 
     def render(self, output):
         return self.activity.render_output(output)
+
+    @staticmethod
+    def _check_template_dependencies(input_template):
+        """Return the list of used external variable in the template.
+        """
+        parsed_template = jinja2.Environment().parse(input_template)
+        return jinja2.meta.find_undeclared_variables(parsed_template)
+
+    @staticmethod
+    def _make_template(input_template):
+        def to_json(obj, *args, **kwargs):
+            return json.dumps(obj, indent=4, sort_keys=True, *args, **kwargs)
+
+        env = jinja2.Environment()
+        env.filters['to_json'] = to_json
+        return env.from_string(input_template)
 
 
 class TemplatedStep(Step):
