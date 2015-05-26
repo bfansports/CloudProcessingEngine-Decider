@@ -113,7 +113,9 @@ class ActivityStep(Step):
 
     def prepare(self, context):
         if self.input_template is not None:
-            activity_input = self.input_template.render(context)
+            activity_input_json = self.input_template.render(context)
+            # FIXME: We are assuming JSON activity input here
+            activity_input = json.loads(activity_input_json)
         else:
             activity_input = None
         self.activity.check_input(activity_input)
