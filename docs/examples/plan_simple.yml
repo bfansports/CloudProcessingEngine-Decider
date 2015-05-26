@@ -34,7 +34,7 @@ plan:
       type: object
       properties":
         input:
-      		type: "string"
+          type: "string"
       required:
       - input
     output_specs:                     # YAQL output expressions
