@@ -1,7 +1,8 @@
 from __future__ import absolute_import
 
-import logging
 import json
+import jsonschema
+import logging
 
 from .state import State
 from .step_results import (
@@ -101,10 +102,12 @@ class StateMachine(object):
         _LOGGER.debug('%r', event)
         start_attrs = event['workflowExecutionStartedEventAttributes']
         # Note that if no input was provided, the 'input' key will not be there
-        wf_input = start_attrs.get('input', '{}')
+        wf_input = start_attrs.get('input', 'null')
         try:
             input_data = json.loads(wf_input)
-        except ValueError:
+            self.plan.check_input(input_data)
+
+        except (ValueError, jsonschema.ValidationError):
             _LOGGER.exception('Invalid workflow input: %r', wf_input)
             # We cannot do anything, just abort
             with self.state(event['eventId']):

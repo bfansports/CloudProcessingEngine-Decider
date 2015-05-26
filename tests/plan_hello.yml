@@ -1,7 +1,7 @@
 ---
 name: HelloWorkFlow     # WF name in SWF
-input_spec: ~           # ... # JSON schema input validation
-
+input_spec:             # JSON schema input validation
+  type: "null"
 steps:
 - name: "saying_hi"
   activity: "HelloWorld"

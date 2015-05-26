@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import jsonschema
 import logging
 
 from .step import Step
@@ -18,9 +19,26 @@ class Plan(object):
 
     def __init__(self, name, input_spec='', steps=(), activities=()):
         self.name = name
-        self.input_spec = input_spec
         self.steps = list(steps)
         self.activities = dict(activities)
+
+        if input_spec:
+            try:
+                self.input_spec = jsonschema.Draft4Validator(input_spec)
+            except jsonschema.SchemaError as err:
+                _LOGGER.critical('Invalid JSONSchema in plan %r: %r',
+                                 name, err)
+                raise
+
+        else:
+            self.input_spec = None
+
+    def check_input(self, plan_input):
+        if self.input_spec is not None:
+            return self.input_spec.validate(plan_input)
+        else:
+            # No input schema meams we accept everything
+            return True
 
     @classmethod
     def load(cls, data):
@@ -37,7 +55,7 @@ class Plan(object):
 
         plan = cls(
             name=data['name'],
-            input_spec=None,  # FIXME
+            input_spec=data['input_spec'],
             steps=steps,
             activities=activities,
         )
