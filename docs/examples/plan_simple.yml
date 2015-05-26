@@ -1,48 +1,48 @@
 ---
-name: MyTestWorkFlow1
-input_spec: ... # JSON schema input validation
+plan:
+  name: MyWorkFlow                    # WF name in SWF
+  input_spec:                         # JSON-Schema input validation
 
-steps:
-- name: MyStep1
-  activity: MyAct1
-  requires: []
-  input: |
-      Some input
+  steps:
+  - name: MyStep1
+    activity: MyAct1
+    parents: []
+    input: |
+      { "input": "Some input" }
 
-- name: MyStep2
-  activity: MyAct1
-  requires: []
-  input: "foo"
+  - name: MyStep2
+    activity: MyAct1
+    parents: []
+    input: |
+      { "input": "foo" }
 
-- name: MyStep3
-  activity: MyAct2
-  requires:
-  - [ MyStep1, 'success' ]
-  - [ MyStep2, 'complete' ] # Step2 can succeed or fail
-  input: |
-      Some crazy template
+  - name: MyStep3
+    activity: MyAct2
+    parents:
+    - [ MyStep1, 'complete' ]
+    - [ MyStep2, 'complete' ]
+    input: |
+      {
+        "one": {{MyStep1.__all__ | to_json}}
+        "two": {{MyStep2.foo | to_json}}
+      }
 
-activities:
-- name: MyAct1  # Activity name in SWF
-  input_spec: '' # JSON schema input
-  output_specs: # YAQL data extraction
-    key1: "YAQL on output"
-    key2: "YAQL on output"
-    key3: "YAQL on output"
-  # Other SWF Attribute here
+  activities:
+  - name: MyAct1                      # Activity name in SWF
+    version: "1.0"                    # Activity version in SWF
+    input_spec:                       # JSON-Schema input
+      type: object
+      properties":
+        input:
+      		type: "string"
+      required:
+      - input
+    output_specs:                     # YAQL output expressions
+      __all__: "$"                      # Extract the whole output in '__all__'
+      value1: "$.foo.bar.baz"           # Extract a specific value
+      value2: "$.foo"
 
-- name: MyAct2  # Activity name in SWF
-  input_spec: '' # JSON schema input
-  output_specs: # YAQL data extraction
-    key1: YAQL on output
-    key2: YAQL on output
-    key3: YAQL on output
-  # Other SWF Attribute here
-
-- name: MyAct3  # Activity name in SWF
-  input_spec: '' # JSON schema input
-  output_specs: # YAQL data extraction
-    key1: YAQL on output
-    key2: YAQL on output
-    key3: YAQL on output
-  # Other SWF Attribute here
+  - name: MyAct2                      # Activity name in SWF
+    version: "2.0"                    # Activity version in SWF
+    input_spec: ~                     # JSON-Schema input (None is disabled)
+    output_specs: ~                   # YAQL expressions (None is disabled)

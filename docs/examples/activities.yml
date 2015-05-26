@@ -1,17 +1,37 @@
 ---
 activities:
-- name: MyAct1  # Activity name in SWF
-  input_spec: '' # JSON schema input
-  outputs_spec: # YAQL data extraction
-    key1: "$.foo.bar.baz"
-    key2: "$.foo.bar2"
-    key3: "$.foo.baz"
-  failure_count: 3
+- name: MyAct1      # Activity name in SWF
+  version: 1.0      # Activity version in SWF
+  input_spec:       # JSON schema input
+    type: "string"
+  outputs_spec:     # YAQL expressions
+    __all__: "$"
+    baz: "$.foo.bar.baz"
+    bar2: "$.foo.bar2"
+    baz: "$.foo.baz"
 
-- name: MyAct2  # Activity name in SWF
-  input_spec: '' # JSON schema input
-  output_specs: # YAQL data extraction
-    key1: YAQL on output
-    key2: YAQL on output
-    key3: YAQL on output
-  failure_count: 3
+# Assumuming the above outputs_spec and the below output
+# {
+#   "foo": {
+#     "bar": {
+#       "baz": "hello"
+#     }
+#     "bar2": [1, 2, 3]
+#   }
+# }
+#
+# The result from an ActivityStep using this activity would be
+#
+# {
+#   __all__: {
+#     "foo": {
+#       "bar": {
+#         "baz": "hello"
+#       }
+#       "bar2": [1, 2, 3]
+#     }
+#   },
+#   baz: "hello",
+#   bar2: [1, 2, 3],
+#   baz: None,
+# }
