@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import json
 import logging
 
 import boto.swf.layer2 as swf
@@ -65,6 +66,12 @@ class SWFDecider(swf.Decider):
         # We are still going, start any ready activity
         for next_step in results:
             activity = next_step.activity
+            # FIXME: We are assuming JSON activity input here
+            activity_input = (
+                json.dumps(next_step.activity_input)
+                if next_step.activity_input is not None
+                else None
+            )
             decisions.schedule_activity_task(
                 activity_id=next_step.name,
                 activity_type_name=activity.name,
@@ -75,7 +82,7 @@ class SWFDecider(swf.Decider):
                 schedule_to_close_timeout=activity.schedule_to_close_timeout,
                 schedule_to_start_timeout=activity.schedule_to_start_timeout,
                 start_to_close_timeout=activity.start_to_close_timeout,
-                input=next_step.activity_input,
+                input=activity_input,
             )
 
         return decisions
