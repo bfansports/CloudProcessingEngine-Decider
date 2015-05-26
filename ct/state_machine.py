@@ -133,9 +133,10 @@ class StateMachine(object):
 
     def __ev_completed(self, event):
         _LOGGER.debug('%r', event)
-        output = event['activityTaskCompletedEventAttributes'].get('result')
-        sched_event_attr = event['activityTaskCompletedEventAttributes']
-        sched_event_id = sched_event_attr['scheduledEventId']
+        completed_event = event['activityTaskCompletedEventAttributes']
+        output_json = completed_event.get('result', 'null')
+        output = json.loads(output_json)
+        sched_event_id = completed_event['scheduledEventId']
         step_name = self._event_ids[sched_event_id]
         with self.state(event['eventId']):
             self.state.step_update(step_name, 'succeeded', output)
