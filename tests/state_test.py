@@ -73,6 +73,24 @@ class StepStateTest(unittest.TestCase):
             }
         )
 
+    def test_step_prepare_parents_with_none(self):
+        """Make sure `step.prepare` is called with a dict of all the parents
+        attributes and parents with None as output are properly handled.
+        """
+        self.step_state.parents = [
+            TestParent('foo', {'a': 1}),
+            TestParent('bar', None),
+            TestParent('baz', {'c': 1}),
+        ]
+        self.step_state.update('ready', '__test_update__')
+        self.mock_step.prepare.assert_called_with(
+            {
+                'foo': {'a': 1},
+                'bar': None,
+                'baz': {'c': 1},
+            }
+        )
+
 
 if __name__ == '__main__':
     import logging
