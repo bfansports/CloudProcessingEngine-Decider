@@ -19,7 +19,7 @@ import mock
 import yaml
 
 import ct
-import ct.workspace
+import ct.plan
 import ct.state_machine
 
 
@@ -30,7 +30,7 @@ class StateMachineTest(unittest.TestCase):
         # Load reference plan
         with open(os.path.join(self.MY_DIR, 'plan_hello.yml')) as f:
             plan_data = yaml.load(f)
-        self.plan = ct.workspace.Plan.load(plan_data)
+        self.plan = ct.plan.Plan.from_data(plan_data)
         # Load reference events
         with open(os.path.join(self.MY_DIR, 'plan_hello_events.yml')) as f:
             events_data = yaml.load(f)

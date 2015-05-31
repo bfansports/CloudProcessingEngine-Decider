@@ -17,28 +17,36 @@ sys.path.append(
 )
 
 from ct.register import register
+from ct.plan import Plan
 from ct.swf_decider import SWFDecider as Decider
-from ct.workspace import Plan
-
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--domain', required=True)
-    parser.add_argument('--task_list', required=True)
-    parser.add_argument('--workflow', required=True)
-    parser.add_argument('--version', required=True)
+    parser.add_argument('-d', '--domain', required=True)
+    parser.add_argument('-t', '--task_list', required=True)
+    parser.add_argument('--plan_name', required=False)
+    parser.add_argument('--plan_version', required=False)
     parser.add_argument('--plan', required=True)
     args = parser.parse_args()
 
+    # Load the main plan data
     with open(args.plan) as f:
-        p = Plan.load(yaml.load(f))
+        plan_data = yaml.load(f)
 
+    if args.plan_name:
+        plan_data['name'] = args.plan_name
+    if args.plan_version:
+        plan_data['version'] = args.plan_version
+
+    # Construct the plan
+    p = Plan.from_data(plan_data)
     logging.info('Loaded plan %r', p)
 
+    # Make sure the plan is registered in SWF
     register(domain=args.domain,
-             workflows=((args.workflow, args.version),))
+             workflows=((p.name, p.version),))
 
-    d = Decider(p, domain=args.domain, task_list=args.task_list)
+    d = Decider(domain=args.domain, task_list=args.task_list, plan=p)
     while d.run(): pass
 
 
