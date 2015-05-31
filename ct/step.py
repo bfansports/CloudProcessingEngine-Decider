@@ -24,6 +24,10 @@ class StepDefinitionError(StepError):
 
 
 class Step(object):
+    """Base `Step` in a workflow.
+
+    A `Step` is composed of a name and a collection of its requirements.
+    """
 
     __slots__ = ('name', 'requires')
     __metaclass__ = abc.ABCMeta
@@ -38,11 +42,12 @@ class Step(object):
         from .state import StepStateStatus
 
         if isinstance(parent_def, basestring):
-            return (parent_def, StepStateStatus.succeeded)
+            return (parent_def, StepStateStatus.completed)
         else:
             try:
                 parent_name, status_name = parent_def
                 return (parent_name, getattr(StepStateStatus, status_name))
+
             except AttributeError as err:
                 raise StepDefinitionError('Invalid Step status name: %r' %
                                           err.args[0])
@@ -51,37 +56,56 @@ class Step(object):
                                           parent_def)
 
     @classmethod
-    def make_step(cls, step_data, activities):
-        """Create a new Step object from a definition"""
+    def from_data(cls, step_data, activities):
+        """Create a new Step object from a step definition"""
         if 'activity' in step_data:
             activity_name = step_data['activity']
             activity = activities[activity_name]
 
             step = ActivityStep(
                 name=step_data['name'],
-                requires=step_data['requires'],
+                requires=step_data.get('requires', ()),
                 activity=activity,
-                input_template=step_data['input'],
+                input_template=step_data.get('input', None),
             )
 
         elif 'eval' in step_data:
             step = TemplatedStep(
                 name=step_data['name'],
-                requires=step_data['requires'],
+                requires=step_data.get('requires', ()),
                 eval_block=step_data['eval'],
             )
+
+        else:
+            raise ValueError('Invalid Step data: %r' % step_data)
+
         return step
 
     @abc.abstractmethod
-    def run(self, _step_input):
-        pass
-
-    @abc.abstractmethod
     def prepare(self, _context):
+        """Prepare step's input from context.
+
+        :returns:
+            Step's input
+        """
         pass
 
     @abc.abstractmethod
-    def render(self, output):
+    def run(self, _step_input):
+        """Run the step from its input.
+
+        :returns:
+            A StepResult object
+        """
+        pass
+
+    @abc.abstractmethod
+    def render(self, _output):
+        """Renders the Step's output for usage by other steps.
+
+        :returns:
+            A dictionary of `key: value` pairs.
+        """
         pass
 
     def __repr__(self):

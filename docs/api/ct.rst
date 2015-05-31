@@ -1,11 +1,6 @@
 ct package
 ==========
 
-.. automodule:: ct
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Submodules
 ----------
 
@@ -25,10 +20,10 @@ ct.cmd module
     :undoc-members:
     :show-inheritance:
 
-ct.decider module
------------------
+ct.plan module
+--------------
 
-.. automodule:: ct.decider
+.. automodule:: ct.plan
     :members:
     :undoc-members:
     :show-inheritance:
@@ -41,10 +36,26 @@ ct.register module
     :undoc-members:
     :show-inheritance:
 
+ct.schema module
+----------------
+
+.. automodule:: ct.schema
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ct.state module
 ---------------
 
 .. automodule:: ct.state
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ct.state_machine module
+-----------------------
+
+.. automodule:: ct.state_machine
     :members:
     :undoc-members:
     :show-inheritance:
@@ -57,12 +68,27 @@ ct.step module
     :undoc-members:
     :show-inheritance:
 
-ct.workspace module
--------------------
+ct.step_results module
+----------------------
 
-.. automodule:: ct.workspace
+.. automodule:: ct.step_results
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ct.swf_decider module
+---------------------
+
+.. automodule:: ct.swf_decider
     :members:
     :undoc-members:
     :show-inheritance:
 
 
+Module contents
+---------------
+
+.. automodule:: ct
+    :members:
+    :undoc-members:
+    :show-inheritance:
