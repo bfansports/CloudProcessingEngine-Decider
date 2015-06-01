@@ -17,7 +17,7 @@ sys.path.append(
     )
 )
 
-from ct.register import register
+from pydecider.register import register
 
 class Worker(swf.ActivityWorker):
 
