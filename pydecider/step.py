@@ -115,11 +115,16 @@ class Step(object):
 
 class ActivityStep(Step):
 
-    __slots__ = ('activity', 'input_template')
+    __slots__ = ('activity', 'input_template', '__env')
 
     def __init__(self, name, activity, input_template, requires=()):
         super(ActivityStep, self).__init__(name, requires)
         self.activity = activity
+        self.input_template = None
+
+        # Define the Jinga2 environment
+        self.__env = jinja2.Environment(finalize=self.__jsonify)
+
         if input_template is not None:
             tp_required = self._check_template_dependencies(input_template)
             for tp_var in tp_required:
@@ -131,17 +136,34 @@ class ActivityStep(Step):
                         'Invalid step %r: Template used %r is not required' %
                         (self.name, tp_var,)
                     )
-            self.input_template = self._make_template(input_template)
+
+            self.input_template = self.__env.from_string(input_template)
+
+    def __jsonify(self, obj):
+        # Note: This method is called by Jinja2 to "finalize" its variables.
+        #       Jinja2 also calls it to "finalize" the non-variable chunks
+        #       of a template's string when compiling the template, so we have
+        #       to be careful of extra quoting.
+        if self.input_template is not None:
+            # Now that the templates are defined, we can define the "finalize"
+            # function to JSON dump all template variables.
+            return json.dumps(obj, indent=4, sort_keys=True)
         else:
-            self.input_template = None
+            return obj
 
     def prepare(self, context):
         if self.input_template is not None:
             activity_input_json = self.input_template.render(context)
             # FIXME: We are assuming JSON activity input here
-            activity_input = json.loads(activity_input_json)
+            try:
+                activity_input = json.loads(activity_input_json)
+            except ValueError:
+                _LOGGER.exception('Invalid template result: %r',
+                                  activity_input_json)
+                raise
         else:
             activity_input = None
+
         self.activity.check_input(activity_input)
         return activity_input
 
@@ -155,21 +177,11 @@ class ActivityStep(Step):
     def render(self, output):
         return self.activity.render_output(output)
 
-    @staticmethod
-    def _check_template_dependencies(input_template):
+    def _check_template_dependencies(self, input_template):
         """Return the list of used external variable in the template.
         """
-        parsed_template = jinja2.Environment().parse(input_template)
+        parsed_template = self.__env.parse(input_template)
         return jinja2.meta.find_undeclared_variables(parsed_template)
-
-    @staticmethod
-    def _make_template(input_template):
-        def to_json(obj, *args, **kwargs):
-            return json.dumps(obj, indent=4, sort_keys=True, *args, **kwargs)
-
-        env = jinja2.Environment()
-        env.filters['to_json'] = to_json
-        return env.from_string(input_template)
 
 
 class TemplatedStep(Step):

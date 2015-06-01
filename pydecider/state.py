@@ -136,6 +136,10 @@ class State(object):
         step_state = StepState(step, self._context)
         _LOGGER.debug('Defining new step %r in state', step_state)
 
+        # All steps are children of the root INIT_STEP step
+        self._init_step.children.add(step_state)
+        step_state.parents.add(self._init_step)
+
         if self._stepstate_insert(step_state):
             # All steps are a parent of END_STEP
             # FIXME: Could be optimized so that only steps without children are
@@ -185,10 +189,7 @@ class State(object):
         return ready_steps
 
     def _stepstate_insert(self, step_state):
-        if ((not step_state.step.requires) and
-                (step_state.step.name is not INIT_STEP)):
-            # No requirement, set this step as a child of the root step
-            self._init_step.children.add(step_state)
+        if (not step_state.step.requires):
             self.step_states[step_state.name] = step_state
             return True
 
@@ -321,6 +322,9 @@ class StepState(object):
         for parent in self.parents:
             if not parent.is_completed:
                 ready = False
+                continue
+
+            if parent.name is INIT_STEP:
                 continue
 
             assert(parent.name in self.step.requires)
