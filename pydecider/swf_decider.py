@@ -15,7 +15,7 @@ class SWFDecider(swf.Decider):
     name = 'generic'
     version = '1.0'
 
-    def __init__(self, plan, domain, task_list):
+    def __init__(self, domain, task_list, plan=None):
         self.domain = domain
         self.task_list = task_list
         super(SWFDecider, self).__init__()

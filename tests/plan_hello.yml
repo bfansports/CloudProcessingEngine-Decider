@@ -1,20 +1,32 @@
 ---
-name: HelloWorkFlow     # WF name in SWF
+name: "HelloWorkFlow"   # WF name in SWF
+version: "1.0"          # WF version in SWF
+
 input_spec:             # JSON schema input validation
-  type: "null"
+  type: "object"
+  properties:
+    who:
+      type: "string"
+
 steps:
 - name: "saying_hi"
   activity: "HelloWorld"
-  requires: []
-  input: ~
+  input: |
+    {
+      "who": {{__input__.who}}
+    }
 - name: "saying_hi_again"
   activity: "HelloWorld"
   requires: ["saying_hi"]
-  input: ~
+  input: |
+    {{__input__}}
 
 activities:
 - name: "HelloWorld"      # Activity name in SWF
   version: "1.0"
   input_spec:
-    type: "null"
+    type: "object"
+    properties:
+      who:
+        type: "string"
   outputs_spec: ~
