@@ -10,6 +10,10 @@ events:
     taskList: {name: default}
     taskStartToCloseTimeout: '300'
     workflowType: {name: Test, version: '1.0'}
+    input: |
+      {
+        "who": "world"
+      }
 - decisionTaskScheduledEventAttributes:
     startToCloseTimeout: '300'
     taskList: {name: default}
@@ -57,7 +61,10 @@ events:
     activityType: {name: HelloWorld, version: '1.0'}
     decisionTaskCompletedEventId: 10
     heartbeatTimeout: '60'
-    input: ''
+    input: |
+      {
+        "who": "world"
+      }
     scheduleToCloseTimeout: '300'
     scheduleToStartTimeout: '30'
     startToCloseTimeout: '300'
@@ -92,7 +99,10 @@ events:
     activityType: {name: HelloWorld, version: '1.0'}
     decisionTaskCompletedEventId: 16
     heartbeatTimeout: '60'
-    input: ''
+    input: |
+      {
+        "who": "world"
+      }
     scheduleToCloseTimeout: '300'
     scheduleToStartTimeout: '30'
     startToCloseTimeout: '300'
