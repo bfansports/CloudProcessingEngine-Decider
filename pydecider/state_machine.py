@@ -1,9 +1,9 @@
 from __future__ import absolute_import
 
 import json
-import jsonschema
 import logging
 
+from .schema import ValidationError
 from .state import State
 from .step_results import (
     ActivityStepResult,
@@ -14,6 +14,9 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class StateMachine(object):
+
+    __slots__ = ('plan', 'state', '_event_ids')
+
     def __init__(self, plan):
         self.plan = plan
         self.state = None
@@ -107,7 +110,7 @@ class StateMachine(object):
             input_data = json.loads(wf_input)
             self.plan.check_input(input_data)
 
-        except (ValueError, jsonschema.ValidationError):
+        except (ValueError, ValidationError):
             _LOGGER.exception('Invalid workflow input: %r', wf_input)
             # We cannot do anything, just abort
             with self.state(event['eventId']):

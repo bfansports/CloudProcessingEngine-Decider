@@ -1,4 +1,4 @@
-"""Unit tests for ct.state_machine
+"""Unit tests for pydecider.state_machine
 """
 
 import os
@@ -18,8 +18,8 @@ import collections
 import mock
 import yaml
 
-import ct
-import ct.state
+import pydecider
+import pydecider.state
 
 
 TestParent = collections.namedtuple('TestParent', ['name', 'output'])
@@ -28,9 +28,9 @@ TestParent = collections.namedtuple('TestParent', ['name', 'output'])
 class StepStateTest(unittest.TestCase):
     def setUp(self):
         self.mock_step = mock.Mock()
-        self.step_state = ct.state.StepState(step=self.mock_step,
-                                             status='running',
-                                             context='__test__')
+        self.step_state = pydecider.state.StepState(step=self.mock_step,
+                                                    status='running',
+                                                    context='__test__')
 
     def test_step_prepare_no_parents(self):
         """No parents, `step.prepare` called with an empty dict."""
@@ -61,7 +61,7 @@ class StepStateTest(unittest.TestCase):
         """
         self.step_state.parents = [
             TestParent('foo', {'a': 1}),
-            TestParent(ct.state.INIT_STEP, {'b': 1}),
+            TestParent(pydecider.state.INIT_STEP, {'b': 1}),
             TestParent('baz', {'c': 1}),
         ]
         self.step_state.update('ready', '__test_update__')

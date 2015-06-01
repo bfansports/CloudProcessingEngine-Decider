@@ -1,7 +1,7 @@
-ct
-==
+pydecider
+=========
 
 .. toctree::
    :maxdepth: 4
 
-   ct
+   pydecider
