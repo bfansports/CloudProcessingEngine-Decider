@@ -64,3 +64,6 @@ target/
 !.gitignore
 !.travis.yml
 !.keepme
+
+# MacOS X
+.DS_Store
