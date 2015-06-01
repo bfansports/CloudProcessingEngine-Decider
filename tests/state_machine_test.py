@@ -1,4 +1,4 @@
-"""Unit tests for ct.state_machine
+"""Unit tests for pydecider.state_machine
 """
 
 import os
@@ -18,9 +18,9 @@ import copy
 import mock
 import yaml
 
-import ct
-import ct.plan
-import ct.state_machine
+import pydecider
+import pydecider.plan
+import pydecider.state_machine
 
 
 class StateMachineTest(unittest.TestCase):
@@ -30,13 +30,13 @@ class StateMachineTest(unittest.TestCase):
         # Load reference plan
         with open(os.path.join(self.MY_DIR, 'plan_hello.yml')) as f:
             plan_data = yaml.load(f)
-        self.plan = ct.plan.Plan.from_data(plan_data)
+        self.plan = pydecider.plan.Plan.from_data(plan_data)
         # Load reference events
         with open(os.path.join(self.MY_DIR, 'plan_hello_events.yml')) as f:
             events_data = yaml.load(f)
         self.events = events_data['events']
         # Create a state machine
-        self.statemachine = ct.state_machine.StateMachine(self.plan)
+        self.statemachine = pydecider.state_machine.StateMachine(self.plan)
 
     def test_workflow_start(self):
         results = self.statemachine.eval(self.events[:3])

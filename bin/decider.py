@@ -16,9 +16,9 @@ sys.path.append(
     )
 )
 
-from ct.register import register
-from ct.plan import Plan
-from ct.swf_decider import SWFDecider as Decider
+from pydecider.register import register
+from pydecider.plan import Plan
+from pydecider.swf_decider import SWFDecider as Decider
 
 def main():
     parser = argparse.ArgumentParser()

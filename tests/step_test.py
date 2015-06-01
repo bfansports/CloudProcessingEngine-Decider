@@ -1,4 +1,4 @@
-"""Unit tests for ct.step
+"""Unit tests for pydecider.step
 """
 
 import os
@@ -14,8 +14,8 @@ sys.path.append(
     )
 )
 
-from ct.step import Step, StepDefinitionError
-from ct.state import StepStateStatus
+from pydecider.step import Step, StepDefinitionError
+from pydecider.state import StepStateStatus
 
 
 class StepTest(unittest.TestCase):
