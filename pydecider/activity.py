@@ -1,16 +1,18 @@
 import logging
 
-import jsonschema
+from .schema import SchemaValidated
+
 import yaql
 import yaql.exceptions
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class Activity(object):
+class Activity(SchemaValidated):
 
     __slots__ = ('name', 'version', 'description',
-                 'input_spec', 'outputs_spec',
+                 '_input_validator', 'outputs_spec',
+                 '_task_list',
                  'heartbeat_timeout',
                  'schedule_to_start_timeout',
                  'schedule_to_close_timeout',
@@ -18,29 +20,23 @@ class Activity(object):
 
     def __init__(self, name, version, description,
                  input_spec, outputs_spec,
-                 heartbeat_timeout='60',
-                 schedule_to_close_timeout='300',
-                 schedule_to_start_timeout='30',
-                 start_to_close_timeout='300'):
+                 task_list,
+                 heartbeat_timeout,
+                 schedule_to_close_timeout,
+                 schedule_to_start_timeout,
+                 start_to_close_timeout):
 
         self.name = name
         self.version = version
         self.description = description
+        self._task_list = task_list
         self.heartbeat_timeout = heartbeat_timeout
         self.schedule_to_close_timeout = schedule_to_close_timeout
         self.schedule_to_start_timeout = schedule_to_start_timeout
         self.start_to_close_timeout = start_to_close_timeout
 
         if input_spec:
-            try:
-                self.input_spec = jsonschema.Draft4Validator(input_spec)
-            except jsonschema.SchemaError as err:
-                _LOGGER.critical('Invalid JSONSchema in Activity %r: %r',
-                                 name, err)
-                raise
-
-        else:
-            self.input_spec = None
+            self.init_validator(input_spec)
 
         if outputs_spec:
             try:
@@ -57,13 +53,6 @@ class Activity(object):
     def __repr__(self):
         return 'Activity(name={name})'.format(name=self.name)
 
-    def check_input(self, activity_input):
-        if self.input_spec is not None:
-            return self.input_spec.validate(activity_input)
-        else:
-            # No input schema meams we accept everything
-            return True
-
     def render_output(self, output):
         return {
             key: expr.evaluate(output)
@@ -72,7 +61,12 @@ class Activity(object):
 
     @property
     def task_list(self):
-        return '{name}-{version}'.format(name=self.name, version=self.version)
+        if self._task_list is None:
+            self._task_list = '{name}-{version}'.format(
+                name=self.name,
+                version=self.version
+            )
+        return self._task_list
 
     @classmethod
     def from_data(cls, activity_data):
@@ -84,7 +78,17 @@ class Activity(object):
                 'description',
                 'Activity %r' % activity_data['name']
             ),
-            input_spec=activity_data['input_spec'],
-            outputs_spec=activity_data['outputs_spec'],
-            # FIXME: Timeout attributes
+            input_spec=activity_data.get('input_spec', None),
+            outputs_spec=activity_data.get('outputs_spec', None),
+            task_list=activity_data.get('task_list', None),
+            heartbeat_timeout=activity_data.get('heartbeat_timeout', '60'),
+            schedule_to_close_timeout=activity_data.get(
+                'schedule_to_close_timeout', '300'
+            ),
+            schedule_to_start_timeout=activity_data.get(
+                'schedule_to_start_timeout', '30'
+            ),
+            start_to_close_timeout=activity_data.get(
+                'start_to_close_timeout', '300'
+            ),
         )
