@@ -47,7 +47,11 @@ class StateMachineTest(unittest.TestCase):
                  for result in results
             ],
             [
-                ('saying_hi', self.plan.activities['HelloWorld'], None)
+                (
+                    'saying_hi',
+                    self.plan.activities['HelloWorld'],
+                    {'who': 'world'}
+                )
             ]
         )
 
@@ -74,7 +78,11 @@ class StateMachineTest(unittest.TestCase):
                  for result in results
             ],
             [
-                ('saying_hi_again', self.plan.activities['HelloWorld'], None)
+                (
+                    'saying_hi_again',
+                    self.plan.activities['HelloWorld'],
+                    {'who': 'world'}
+                )
             ]
         )
 
