@@ -125,7 +125,7 @@ class State(object):
                           new_output=new_data)
 
         if self._end_step.status is StepStateStatus.ready:
-            self.status = StateStatus.completed
+            self.status = StateStatus.suceeded
         elif self._end_step.status is StepStateStatus.aborted:
             self.status = StateStatus.failed
 
