@@ -2,3 +2,4 @@ mock >= 1.0
 pbr >= 0.10
 testrepository >= 0.0.18
 Sphinx >= 1.3
+Pygments >= 2.0
