@@ -10,6 +10,6 @@ The decider perform this decisions dynamically and initiate the "next step" of y
 
 ### How to use it ?
 
-See the dedider documentation here: http://sportarchive.github.io/CloudTranscode-Decider/
+See the decider documentation here: http://sportarchive.github.io/CloudTranscode-Decider/
 
 You need to define your Decider plan so the decider knows how to run your workflow.
