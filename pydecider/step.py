@@ -104,7 +104,7 @@ class Step(object):
         """Renders the Step's output for usage by other steps.
 
         :returns:
-            A dictionary of `key: value` pairs.
+            A dictionary of 'key: value' pairs.
         """
         pass
 
