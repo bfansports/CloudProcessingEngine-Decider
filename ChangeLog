@@ -1,3 +1,31 @@
 CHANGES
 =======
 
+* Documentation update
+* Simple readme
+* Fixed minor typo in the decider
+* state: Fix status typo
+* state: Fix global state change
+* Adjusted Dockerfile and added logging
+* Added Dockerfile and Vagrantfile for deployment
+* removed unused file
+* Fix `plan_simple` example
+* Add input data and templates to the state_machine test
+* Fix templating of complex objects
+* Change the decider's namespace
+* Refactor of the workspace/plan/activities
+* ignore MacOSX special files
+* JSON load activity tasks output data
+* Input validation fixes
+* Add a `to_json` filter for step input templates
+* Step input improvements
+* Added build status to README
+* Added build status to README
+* Specify the input as JSON, not YAML
+* Properly abort the workflow on unknown events
+* Miscellaneous code cleanup and fixes
+* Add Travis CI support
+* Delete plan
+* Factor out the state machine
+* Import of source
+* Initial commit

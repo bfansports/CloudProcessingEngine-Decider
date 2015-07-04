@@ -10,6 +10,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class Plan(SchemaValidated):
+    """Workflow plan.
+    """
 
     __slots__ = ('name',
                  'version',
