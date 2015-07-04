@@ -4,21 +4,12 @@
 
 ### What is it ?
 
-CPE is using AWS SWF cloud service to manage workflows. Workflows are chains of Activities that are processed in the order you decide.
+The CPE project (https://github.com/sportarchive/CloudProcessingEngine) is using the AWS SWF cloud service to manage workflows. Workflows are chains of Activities that are processed in the order you decide.
 
 The decider perform this decisions dynamically and initiate the "next step" of your workflows.
 
 ### How to use it ?
 
-You workflow is defined in a YAML file called a "plan".
+See the dedider documentation here: http://sportarchive.github.io/CloudTranscode-Decider/
 
-Each plan defines a series of steps. Each step can be handled by a type of activity. Activities are piece of code that listen on a particular queue (Activity TaskList) for incoming job to do.
-
-The Decider reads your plan and based on the SWF decision task (event) that comes in (workflow start, activity completed, etc) will perform the proper step:
-   - Start a workflow
-   - Initiate an activity
-   - End the workflow
-
-### Plan format details
-
-The plan format details can be found here: 
+You need to define your Decider plan so the decider knows how to run your workflow.
