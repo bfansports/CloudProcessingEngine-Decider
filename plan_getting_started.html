@@ -1,0 +1,363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Getting Started with Plans &mdash; pydecider 0.0.1.dev56 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1.dev56',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pydecider 0.0.1.dev56 documentation" href="index.html" />
+    <link rel="next" title="pydecider" href="api/modules.html" />
+    <link rel="prev" title="Welcome to Cloud Processing Engine (CPE) Decider‘s documentation!" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-started-with-plans">
+<h1>Getting Started with Plans<a class="headerlink" href="#getting-started-with-plans" title="Permalink to this headline">¶</a></h1>
+<p>The decider consumes a plan and some input. So the first thing you&#8217;ll need to do
+is to define that plan.</p>
+<div class="section" id="basic-plan">
+<h2>Basic Plan<a class="headerlink" href="#basic-plan" title="Permalink to this headline">¶</a></h2>
+<p>The most basic plan is as folow:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="nn">---</span>
+<span class="l-Scalar-Plain">plan</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyWorkFlow</span>
+  <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1.0</span>
+
+  <span class="l-Scalar-Plain">activities</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+    <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1.0</span>
+
+  <span class="l-Scalar-Plain">steps</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep1</span>
+    <span class="l-Scalar-Plain">input</span><span class="p-Indicator">:</span> <span class="p-Indicator">|</span>
+        <span class="no">Input passed to MyAct1</span>
+    <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+</pre></div>
+</div>
+<p>This simple plan tells the decider to schedule a single activity, <cite>&#8220;MyAct1&#8221;</cite>,
+and when it completes, mark the workflow as completed.</p>
+<div class="section" id="plan-attributes">
+<h3>Plan Attributes<a class="headerlink" href="#plan-attributes" title="Permalink to this headline">¶</a></h3>
+<p>This plan specification first defines a <code class="docutils literal"><span class="pre">name</span></code> and a <code class="docutils literal"><span class="pre">version</span></code> for the Plan.
+These correspond directly the the <cite>&#8220;Workflow name&#8221;</cite> and <cite>&#8220;Workflow version&#8221;</cite>
+concepts from SWF.</p>
+</div>
+<div class="section" id="activities">
+<h3>Activities<a class="headerlink" href="#activities" title="Permalink to this headline">¶</a></h3>
+<p>The plan defines a list of <cite>activities</cite>. These are the activities that your
+plan is going to use during its execution.</p>
+<p>At the minimum, you&#8217;ll need to provide a <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">version</span></code> for each of
+your activity (again matching to the <cite>&#8220;Activity name&#8221;</cite> and <cite>&#8220;Activity version&#8221;</cite>
+of SWF).</p>
+<p>You may also want to provide a <code class="docutils literal"><span class="pre">task_list</span></code> attribute as well; without it, the
+decider assumes it is <code class="docutils literal"><span class="pre">&lt;name&gt;-&lt;version&gt;</span></code>).</p>
+<div class="highlight-yaml"><div class="highlight"><pre> <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+   <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1.0</span>
+<span class="hll">   <span class="l-Scalar-Plain">task_list</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyTaskList1</span>
+</span></pre></div>
+</div>
+</div>
+<div class="section" id="steps">
+<h3>Steps<a class="headerlink" href="#steps" title="Permalink to this headline">¶</a></h3>
+<p>Your plan will need to contain a list of <cite>steps</cite>. Each step has a unique
+name and references an activity that will be used to accomplish it.
+You can optionally specify some input to be sent to the Activity.</p>
+<p>Here, in the example above, we define <cite>&#8220;MyStep1&#8221;</cite> which will use <cite>&#8220;MyAct1&#8221;</cite>.
+The decider will send the data <code class="docutils literal"><span class="pre">&quot;Input</span> <span class="pre">passed</span> <span class="pre">to</span> <span class="pre">MyAct1&quot;</span></code> as input to this
+activity.</p>
+</div>
+</div>
+<div class="section" id="multiple-steps">
+<h2>Multiple Steps<a class="headerlink" href="#multiple-steps" title="Permalink to this headline">¶</a></h2>
+<p>We can make the plan a little more interesting by adding multiple steps.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="nn">---</span>
+<span class="l-Scalar-Plain">plan</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyWorkFlow</span>
+  <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1.0</span>
+
+  <span class="l-Scalar-Plain">activities</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+    <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1.0</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct2</span>
+    <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1.0</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct3</span>
+    <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1.0</span>
+
+  <span class="l-Scalar-Plain">steps</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep1</span>
+    <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep2</span>
+    <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct2</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep3</span>
+    <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct3</span>
+</pre></div>
+</div>
+<p>This extands the plan by defining 2 more steps using 2 new acticities.</p>
+<p>Now the decider will schedule all three steps and will terminte the workflow
+once they all have been completed.</p>
+</div>
+<div class="section" id="step-dependencies">
+<h2>Step Dependencies<a class="headerlink" href="#step-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>Now that we have multiple steps, we may want to define intedependencies between
+them.</p>
+<p>You can do that by defining the <code class="docutils literal"><span class="pre">requires</span></code> attribute on a step and listing all
+the other steps that must complete before that step should be scheduled.</p>
+<div class="highlight-yaml"><div class="highlight"><pre> <span class="l-Scalar-Plain">steps</span><span class="p-Indicator">:</span>
+ <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep1</span>
+   <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+ <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep2</span>
+   <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct2</span>
+<span class="hll">   <span class="l-Scalar-Plain">requires</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">MyStep1</span><span class="p-Indicator">]</span>
+</span> <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep3</span>
+   <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct3</span>
+<span class="hll">   <span class="l-Scalar-Plain">requires</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">MyStep1</span><span class="p-Indicator">]</span>
+</span></pre></div>
+</div>
+<p>This tells the decider to only schedule <cite>&#8220;MyStep2&#8221;</cite> and <cite>&#8220;MyStep3&#8221;</cite> once
+<cite>&#8220;MyStep1&#8221;</cite> is completed. And once these two have completed, complete the
+workflow.</p>
+</div>
+<div class="section" id="step-statuses">
+<h2>Step Statuses<a class="headerlink" href="#step-statuses" title="Permalink to this headline">¶</a></h2>
+<p>Until now, we have talked about steps beein <cite>&#8220;completed&#8221;</cite> or not. This means
+that the step execution finished either successfully or failed.</p>
+<p>You can express more control over your steps&#8217; execution by specifying exactly
+which status a step should wait for before being scheduled.</p>
+<div class="highlight-yaml"><div class="highlight"><pre> <span class="l-Scalar-Plain">steps</span><span class="p-Indicator">:</span>
+ <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep1</span>
+   <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+ <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep2</span>
+   <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct2</span>
+<span class="hll">   <span class="l-Scalar-Plain">requires</span><span class="p-Indicator">:</span>
+</span><span class="hll">   <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="nv">MyStep1</span><span class="p-Indicator">,</span> <span class="nv">suceeded</span><span class="p-Indicator">]</span>
+</span> <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep3</span>
+   <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct3</span>
+<span class="hll">   <span class="l-Scalar-Plain">requires</span><span class="p-Indicator">:</span>
+</span><span class="hll">   <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="nv">MyStep1</span><span class="p-Indicator">,</span> <span class="nv">failed</span><span class="p-Indicator">]</span>
+</span></pre></div>
+</div>
+<p>If a step&#8217;s requirements complete but do not satisfy the specified constrains,
+the step will be skipped.</p>
+<p>In this example, <cite>&#8220;MyStep2&#8221;</cite> will only be scheduled if <cite>&#8220;MyStep1&#8221;</cite> succeeds and,
+respectively, <cite>&#8220;MyStep3&#8221;</cite> only if it fails. In each case, the other step will be
+skipped.</p>
+</div>
+<div class="section" id="templated-inputs">
+<h2>Templated Inputs<a class="headerlink" href="#templated-inputs" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All of this <strong>requires</strong> that the Workflow itself and all its activities use
+JSON as serialization format for its inputs and outputs.</p>
+</div>
+<div class="section" id="using-the-worflow-s-input">
+<h3>Using the Worflow&#8217;s input<a class="headerlink" href="#using-the-worflow-s-input" title="Permalink to this headline">¶</a></h3>
+<p>It is possible construct the input passed to Activities using a templating
+language.</p>
+<p>Assuming the input of the Worflow is:</p>
+<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+    <span class="nt">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;USA&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>It then possible to modify our steps definition as follow:</p>
+<div class="highlight-yaml"><div class="highlight"><pre> <span class="l-Scalar-Plain">steps</span><span class="p-Indicator">:</span>
+ <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep1</span>
+   <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+<span class="hll">   <span class="l-Scalar-Plain">input</span><span class="p-Indicator">:</span> <span class="p-Indicator">|</span>
+</span><span class="hll">     <span class="no">{</span>
+</span><span class="hll">         <span class="no">&quot;request-user&quot;: {{__input__.user}}</span>
+</span><span class="hll">     <span class="no">}</span>
+</span></pre></div>
+</div>
+<p>This uses the <cite>__input__</cite> object to reference to the Workflow&#8217;s own input and,
+since it is a hash, accesses the <cite>user</cite> key&#8217;s value, <cite>&#8220;John&#8221;</cite>. The value is then
+replaced in the temaple and the input to that Step becomes:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">steps</span><span class="p-Indicator">:</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep1</span>
+  <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+  <span class="l-Scalar-Plain">input</span><span class="p-Indicator">:</span> <span class="p-Indicator">|</span>
+    <span class="no">{</span>
+        <span class="no">&quot;request-user&quot;: &quot;John&quot;</span>
+    <span class="no">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-other-step-s-output">
+<h3>Using other step&#8217;s output<a class="headerlink" href="#using-other-step-s-output" title="Permalink to this headline">¶</a></h3>
+<p>It is of course also possible generate input using the output of other steps.</p>
+<p>To do this you must first define what the output of an activity looks like. This
+is done in the activity defintion.</p>
+<p>Assuming the result of <cite>MyAct1</cite> looks like this:</p>
+<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+    <span class="nt">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;addresses&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;home&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;street&quot;</span><span class="p">:</span> <span class="s2">&quot;Some street&quot;</span>
+      <span class="p">},</span>
+      <span class="nt">&quot;work&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;street&quot;</span><span class="p">:</span> <span class="s2">&quot;Some other street&quot;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We can define the following <cite>outputs_spec</cite> for this activity:</p>
+<div class="highlight-yaml"><div class="highlight"><pre> <span class="l-Scalar-Plain">activities</span><span class="p-Indicator">:</span>
+ <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+   <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1.0</span>
+<span class="hll">   <span class="l-Scalar-Plain">outputs_spec</span><span class="p-Indicator">:</span>
+</span><span class="hll">     <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="s">&quot;$.user&quot;</span>
+</span><span class="hll">     <span class="l-Scalar-Plain">home-address</span><span class="p-Indicator">:</span> <span class="s">&quot;$.addresses.home&quot;</span>
+</span></pre></div>
+</div>
+<p>These specs are using the <a class="reference external" href="https://github.com/ativelkov/yaql/tree/stable/0.2">YAQL language</a>.</p>
+<p>The above defines that any step using this activity will &#8220;expose&#8221; an usable
+output to other steps that defines the <cite>&#8220;name&#8221;</cite> and <cite>&#8220;home-address&#8221;</cite> keys.</p>
+<p>It them becomes possible to construct a workflow as below.</p>
+<div class="highlight-yaml"><div class="highlight"><pre> <span class="l-Scalar-Plain">activities</span><span class="p-Indicator">:</span>
+ <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+   <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1.0</span>
+   <span class="l-Scalar-Plain">outputs_spec</span><span class="p-Indicator">:</span>
+     <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="s">&quot;$.user&quot;</span>
+     <span class="l-Scalar-Plain">home-address</span><span class="p-Indicator">:</span> <span class="s">&quot;$.addresses.home&quot;</span>
+ <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyOtherActivity</span>
+   <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1.0</span>
+
+   <span class="l-Scalar-Plain">steps</span><span class="p-Indicator">:</span>
+   <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep1</span>
+<span class="hll">     <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+</span>     <span class="l-Scalar-Plain">input</span><span class="p-Indicator">:</span> <span class="p-Indicator">|</span>
+         <span class="no">{</span>
+             <span class="no">&quot;get&quot;: &quot;sender&quot;</span>
+         <span class="no">}</span>
+   <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep2</span>
+<span class="hll">     <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyAct1</span>
+</span>     <span class="l-Scalar-Plain">input</span><span class="p-Indicator">:</span> <span class="p-Indicator">|</span>
+         <span class="no">{</span>
+             <span class="no">&quot;get&quot;: &quot;recipient&quot;</span>
+         <span class="no">}</span>
+   <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyStep3</span>
+     <span class="l-Scalar-Plain">activity</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyOtherActivity</span>
+     <span class="l-Scalar-Plain">requires</span><span class="p-Indicator">:</span>
+<span class="hll">     <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="nv">MyStep1</span><span class="p-Indicator">,</span> <span class="nv">succeeded</span><span class="p-Indicator">]</span>
+</span><span class="hll">     <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="nv">MyStep2</span><span class="p-Indicator">,</span> <span class="nv">succeeded</span><span class="p-Indicator">]</span>
+</span>     <span class="l-Scalar-Plain">input</span><span class="p-Indicator">:</span> <span class="p-Indicator">|</span>
+<span class="hll">         <span class="no">{</span>
+</span><span class="hll">             <span class="no">&quot;sender&quot;: {{MyStep1.name}},</span>
+</span><span class="hll">             <span class="no">&quot;shipping-from&quot;: {{MyStep1.home-address}},</span>
+</span><span class="hll">             <span class="no">&quot;recipient&quot;: {{MyStep2.name}},</span>
+</span><span class="hll">             <span class="no">&quot;shipping-from&quot;: {{MyStep2.home-address}}</span>
+</span><span class="hll">         <span class="no">}</span>
+</span></pre></div>
+</div>
+<p>It is important to note that steps that use other steps&#8217; output in their
+templated input <strong>must</strong> define these steps as required. The decider will refuse
+to load any plan that doesn&#8217;t satisfy this rule.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting Started with Plans</a><ul>
+<li><a class="reference internal" href="#basic-plan">Basic Plan</a><ul>
+<li><a class="reference internal" href="#plan-attributes">Plan Attributes</a></li>
+<li><a class="reference internal" href="#activities">Activities</a></li>
+<li><a class="reference internal" href="#steps">Steps</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#multiple-steps">Multiple Steps</a></li>
+<li><a class="reference internal" href="#step-dependencies">Step Dependencies</a></li>
+<li><a class="reference internal" href="#step-statuses">Step Statuses</a></li>
+<li><a class="reference internal" href="#templated-inputs">Templated Inputs</a><ul>
+<li><a class="reference internal" href="#using-the-worflow-s-input">Using the Worflow&#8217;s input</a></li>
+<li><a class="reference internal" href="#using-other-step-s-output">Using other step&#8217;s output</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Cloud Processing Engine (CPE) Decider&#8216;s documentation!</a></li>
+      <li>Next: <a href="api/modules.html" title="next chapter">pydecider</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/plan_getting_started.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Sport Archive.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/plan_getting_started.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
