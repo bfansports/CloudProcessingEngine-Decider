@@ -320,14 +320,13 @@ class StepState(object):
 
         ready = True
         for parent in self.parents:
+            if parent.name is INIT_STEP:
+                continue
+            assert(parent.name in self.step.requires)
+
             if not parent.is_completed:
                 ready = False
                 continue
-
-            if parent.name is INIT_STEP:
-                continue
-
-            assert(parent.name in self.step.requires)
 
             req_status = self.step.requires[parent.name]
             _LOGGER.debug('Checking parent %r meets requirement %r',

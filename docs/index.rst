@@ -1,17 +1,19 @@
-.. pyCT documentation master file, created by
-   sphinx-quickstart on Sat Apr 11 14:38:11 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to |project|'s documentation!
+=====================================
+version: |version|
 
-Welcome to pyCT's documentation!
-================================
 
-Contents:
+|project| is a flexible decider to be used with Amazon's SWF service.
+
+We wanted to hide away all the complexity of writing a stateless decider for SWF
+while providing a declarative yet powerful workflow syntax.
 
 .. toctree::
    :maxdepth: 2
 
+   plan_getting_started
    api/modules
+
 
 Indices and tables
 ==================
@@ -19,4 +21,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
