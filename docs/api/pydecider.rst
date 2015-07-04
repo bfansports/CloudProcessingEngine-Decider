@@ -12,14 +12,6 @@ pydecider.activity module
     :undoc-members:
     :show-inheritance:
 
-pydecider.cmd module
---------------------
-
-.. automodule:: pydecider.cmd
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pydecider.plan module
 ---------------------
 
