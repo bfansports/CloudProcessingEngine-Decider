@@ -53,5 +53,5 @@ def main():
 if __name__ == '__main__':
     import logging
     logging.basicConfig(level=logging.DEBUG,
-                        filename="/var/log/cloudtranscode/decider.log")
+                        filename="/var/tmp/logs/cpe/decider.log")
     main()
