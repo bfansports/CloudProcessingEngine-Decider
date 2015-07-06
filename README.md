@@ -4,12 +4,37 @@
 
 ### What is it ?
 
-The CPE project (https://github.com/sportarchive/CloudProcessingEngine) is using the AWS SWF cloud service to manage workflows. Workflows are chains of Activities that are processed in the order you decide.
+This is a Python implementation of a Decider for AWS SWF. SWF is an Amazon workflow service. To use SWF you need to implement a decider which makes the decisions of "what's next" in your workflow.
 
-The decider perform this decisions dynamically and initiate the "next step" of your workflows.
+This daemon makes these decisions based on a Plan that you write in YAML. This plan defines your workflow and the Decider will follow your plan and will initiate the proper steps in your workflow.
+
+### How can I use it?
+
+You can use it for your own implementation of SWF. However this Decider is part of a broader project called CPE.
+
+The CPE project (https://github.com/sportarchive/CloudProcessingEngine) allows you to process tasks at scale in the Cloud with the use of SWF and SQS.
 
 ### How to use it ?
 
-See the decider documentation here: http://sportarchive.github.io/CloudProcessingEngine-Decider
+You must write your plan. so head to the Decider documentation here for more info: http://sportarchive.github.io/CloudProcessingEngine-Decider
 
-You need to define your Decider plan so the decider knows how to run your workflow.
+#### Install
+
+You will need python installed on your machine.
+
+Then you need to install the dependencies:
+
+```
+sudo ./setup.py install
+```
+
+Then you can run the script:
+
+```
+$> ./decider.py -d SADomain -t sa_validate 
+usage: decider.py [-h] -d DOMAIN -t TASK_LIST [--plan_name PLAN_NAME]
+                  [--plan_version PLAN_VERSION] --plan PLAN
+decider.py: error: argument --plan is required
+```
+
+
