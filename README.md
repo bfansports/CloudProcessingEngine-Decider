@@ -8,13 +8,11 @@ This is a generic Decider for AWS SWF. SWF is an Amazon workflow service. To use
 
 This daemon makes these decisions based on a Plan that you write in YAML. This plan defines your workflow and the Decider will follow your plan and will initiate the proper steps in your workflow.
 
-### How can I use it?
+### How to use it ?
 
 You can use it for your own implementation of SWF. However this Decider is part of a broader project called CPE.
 
 The CPE project (https://github.com/sportarchive/CloudProcessingEngine) allows you to process tasks at scale in the Cloud with the use of SWF and SQS.
-
-### How to use it ?
 
 You must write your plan. so head to the Decider documentation here for more info: http://sportarchive.github.io/CloudProcessingEngine-Decider
 
