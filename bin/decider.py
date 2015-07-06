@@ -21,12 +21,12 @@ from pydecider.plan import Plan
 from pydecider.swf_decider import SWFDecider as Decider
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--domain', required=True)
-    parser.add_argument('-t', '--task_list', required=True)
-    parser.add_argument('--plan_name', required=False)
-    parser.add_argument('--plan_version', required=False)
-    parser.add_argument('--plan', required=True)
+    parser = argparse.ArgumentParser(description='Generic SWF Decider daemon. Read you Plan.yaml and process your workflow accordingly.')
+    parser.add_argument('-d', '--domain', required=True, help='The SWF domain for your workflow')
+    parser.add_argument('-t', '--task_list', required=True, help='The Decision TaskList your decider will listen to')
+    parser.add_argument('--plan', required=True, help='The location of your Plan file')
+    parser.add_argument('--plan_name', required=False, help='If you want to override the plan name in your Plan file')
+    parser.add_argument('--plan_version', required=False, help='If you want to override the plan version in your Plan file')
     args = parser.parse_args()
 
     # Load the main plan data
