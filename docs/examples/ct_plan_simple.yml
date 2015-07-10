@@ -1,0 +1,33 @@
+---
+name: "Transcode"   # WF name in SWF
+version: "1.0"      # WF version in SWF
+input_spec:
+  type: object
+
+# Listing Steps
+steps:
+  - name: "ValidateAssetStep"
+    activity: "ValidateAsset"
+    input: |
+      {{__input__}}
+
+  - name: "TranscodeAssetStep"
+    activity: "TranscodeAsset"
+    requires:
+      - ["ValidateAssetStep", 'succeeded']
+    input: |                    
+      {{__input__}}
+
+# Listing activities
+activities:
+  - name: "ValidateAsset"       # Activity name in SWF
+    version: "v2"
+    input_spec:                 # JSON-Schema input validation
+      type: object
+    outputs_spec: ~
+
+  - name: "TranscodeAsset"       # Activity name in SWF
+    version: "v2"
+    input_spec:                 # JSON-Schema input validation
+      type: object
+    outputs_spec: ~
