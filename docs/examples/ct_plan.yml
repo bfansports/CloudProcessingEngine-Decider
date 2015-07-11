@@ -1,57 +1,62 @@
 ---
 name: "Transcode"   # WF name in SWF
 version: "1.0"      # WF version in SWF
-
 input_spec:
   type: object
 
-# Listing activities
-activities:
-- name: ValidateAsset         # Activity name in SWF
-  version: "v2"
-  input_spec:                 # JSON-Schema input validation
-    type: object
-    properties:
-      input:
-        type: object
-    required:
-      - input
-  outputs_spec:
-    metadata: "$.result"      # We output a `metadata` key that contains the input file metadata gathered by FFprobe
-
-- name: TranscodeAsset        # Activity name in SWF
-  version: "v2"
-  input_spec:                 # JSON-Schema input validation
-    type: object
-    properties:
-      input:
-        type: object
-      metadata:
-        type: object
-      output:
-        type: object
-    required:                 # Required input
-    - input
-    - metadata
-    - output
-
 # Listing Steps
 steps:
-- name: ValidateAssetStep
-  activity: ValidateAsset
-  input: |                    
-    {
-      "input": {{__input__.input}}
-    }
+  - name: "ValidateAssetStep"
+    activity: "ValidateAsset"
+    input: |
+      {{__input__}}
 
-- name: TranscodeAssetStep
-  activity: TranscodeAsset
-  requires:
-  - [ValidateAssetStep, succeeded]
-  input: |                    
-    {
-      "input": {{__input__.input}},
-      "metadata": {{ValidateAssetStep.metadata}}
-      "output": {{__input__.output}}
-    }
+  - name: "TranscodeAssetStep"
+    activity: "TranscodeAsset"
+    requires:
+      - ["ValidateAssetStep", 'succeeded']
+    input: |
+      {
+        "workflow": {{__input__.workflow}},
+        "input_asset": {{__input__.input_asset}},
+        "input_asset_metadata": {{ValidateAssetStep.metadata}},
+        "output_asset": {{__input__.output_asset}}
+      }
+  
+# Listing activities
+activities:
+  - name: "ValidateAsset"       # Activity name in SWF
+    version: "v2"
+    input_spec:                 # JSON-Schema input validation
+      type: object
+      properties:
+      input:
+        type: object
+      required:
+      - input
+    outputs_spec:
+      metadata: "$"
+
+  - name: "TranscodeAsset"       # Activity name in SWF
+    version: "v2"
+    input_spec:                 # JSON-Schema input validation
+      type: object
+      properties:
+        client:
+          type: object
+        workflow:
+          type: object
+        input_asset:
+          type: object
+        input_asset_metadata:
+          type: object
+        output_asset:
+          type: object
+      required:                 # Required input
+      - client
+      - workflow
+      - input_asset
+      - input_asset_metadata
+      - output_asset
+    outputs_spec: ~
 
