@@ -1,4 +1,8 @@
-from __future__ import absolute_import
+from __future__ import (
+    absolute_import,
+    division,
+    print_function
+)
 
 import abc
 import json
@@ -7,6 +11,7 @@ import logging
 import jinja2
 import jinja2.meta
 
+from .state_status import StepStateStatus
 from .step_results import (
     ActivityStepResult,
     TemplatedStepResult,
@@ -39,7 +44,6 @@ class Step(object):
 
     @staticmethod
     def _resolve_parent(parent_def):
-        from .state import StepStateStatus
 
         if isinstance(parent_def, basestring):
             return (parent_def, StepStateStatus.completed)
@@ -58,6 +62,7 @@ class Step(object):
     @classmethod
     def from_data(cls, step_data, activities):
         """Create a new Step object from a step definition"""
+        # FIXME: pass data through JSONSchema
         if 'activity' in step_data:
             activity_name = step_data['activity']
             activity = activities[activity_name]
@@ -175,7 +180,7 @@ class ActivityStep(Step):
         )
 
     def render(self, output):
-        return self.activity.render_output(output)
+        return self.activity.render_outputs(output)
 
     def _check_template_dependencies(self, input_template):
         """Return the list of used external variable in the template.
@@ -195,7 +200,7 @@ class TemplatedStep(Step):
     def prepare(self, context):
         return self.eval_block.render(context)
 
-    def run(self, step_input):
+    def run(self, _step_input):
         return TemplatedStepResult()
 
     def render(self, _output):

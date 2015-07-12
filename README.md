@@ -37,5 +37,3 @@ usage: decider.py [-h] -d DOMAIN -t TASK_LIST [--plan_name PLAN_NAME]
                   [--plan_version PLAN_VERSION] --plan PLAN
 decider.py: error: argument --plan is required
 ```
-
-
