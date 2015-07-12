@@ -62,6 +62,7 @@ class Step(object):
     @classmethod
     def from_data(cls, step_data, activities):
         """Create a new Step object from a step definition"""
+        # FIXME: pass data through JSONSchema
         if 'activity' in step_data:
             activity_name = step_data['activity']
             activity = activities[activity_name]
@@ -179,7 +180,7 @@ class ActivityStep(Step):
         )
 
     def render(self, output):
-        return self.activity.render_output(output)
+        return self.activity.render_outputs(output)
 
     def _check_template_dependencies(self, input_template):
         """Return the list of used external variable in the template.

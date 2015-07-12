@@ -36,7 +36,8 @@ class SchemaValidator(object):
     def validate(self, some_input):
         if self._input_validator is not None:
             try:
-                return self._input_validator.validate(some_input)
+                self._input_validator.validate(some_input)
+                return True
 
             except jsonschema.ValidationError:
                 raise

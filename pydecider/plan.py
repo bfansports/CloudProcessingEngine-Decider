@@ -17,6 +17,45 @@ class Plan(object):
     """Workflow plan.
     """
 
+    _DATA_SCHEMA = {
+        '$schema': 'http://json-schema.org/draft-04/schema#',
+        'type': 'object',
+        'properties': {
+            'name': {
+                'type': 'string',
+            },
+            'version': {
+                'type': 'string',
+            },
+            'input_spec': {
+                'oneOf': [
+                    {'type': 'null'},
+                    {'$ref': '#/definitions/input_spec'},
+                ],
+            },
+            'activities': {
+                'type': 'array',
+                'minItem': 1,
+                'items': {
+                    'type': 'object'
+                }
+            },
+            'steps': {
+                'type': 'array',
+                'minItem': 1,
+                'items': {
+                    'type': 'object'
+                }
+            }
+        },
+        'additionalProperties': False,
+        'definitions': {
+            'input_spec': {
+                '$ref': 'http://json-schema.org/draft-04/schema#',
+            },
+        },
+    }
+
     __slots__ = ('name',
                  'version',
                  'steps',
@@ -38,7 +77,11 @@ class Plan(object):
 
     @classmethod
     def from_data(cls, plan_data):
-        # FIXME: pass data through JSONSchema
+        """Define a plan from a dictionary of attributes.
+        """
+        validator = SchemaValidator(cls._DATA_SCHEMA)
+        validator.validate(plan_data)
+
         activities = {
             activity_data['name']: Activity.from_data(activity_data)
             for activity_data in plan_data['activities']
