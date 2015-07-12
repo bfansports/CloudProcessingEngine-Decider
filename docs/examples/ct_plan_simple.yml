@@ -1,0 +1,40 @@
+---
+name: "Transcode"   # WF name in SWF
+version: "1.0"      # WF version in SWF
+input_spec:
+  type: object
+
+# Listing Steps
+steps:
+  - name: "ValidateAssetStep"
+    activity: "ValidateAsset"
+    input: |
+      {{__input__}}
+
+  - name: "TranscodeAssetStep"
+    activity: "TranscodeAsset"
+    requires:
+      - ["ValidateAssetStep", 'succeeded']
+    input: |
+      {
+        "client": {{__input__.client}},
+        "workflow": {{__input__.workflow}},
+        "input_asset": {{__input__.input_asset}},
+        "input_asset_metadata": {{ValidateAssetStep.metadata}},
+        "output_asset": {{__input__.output_asset}}
+      }
+      
+# Listing activities
+activities:
+  - name: "ValidateAsset"       # Activity name in SWF
+    version: "v2"
+    input_spec:                 # JSON-Schema input validation
+      type: object
+    outputs_spec:
+      metadata: "$"
+
+  - name: "TranscodeAsset"       # Activity name in SWF
+    version: "v2"
+    input_spec:                 # JSON-Schema input validation
+      type: object
+    outputs_spec: ~

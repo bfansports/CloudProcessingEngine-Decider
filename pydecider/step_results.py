@@ -1,3 +1,10 @@
+from __future__ import (
+    absolute_import,
+    division,
+    print_function
+)
+
+
 class ActivityStepResult(object):
 
     __slots__ = ('name', 'activity', 'activity_input')

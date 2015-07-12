@@ -1,4 +1,8 @@
-from __future__ import absolute_import
+from __future__ import (
+    absolute_import,
+    division,
+    print_function
+)
 
 import json
 import logging
@@ -91,7 +95,7 @@ class StateMachine(object):
             for step in self.plan.steps:
                 self.state.step_insert(step)
 
-    def __ev_skip(_self, event):
+    def __ev_skip(self, event):
         _LOGGER.info('Skipping event: %r', event['eventType'])
 
     def __ev_abort(self, event):

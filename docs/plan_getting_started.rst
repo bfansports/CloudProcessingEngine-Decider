@@ -12,19 +12,18 @@ The most basic plan is as folow:
 .. code-block:: yaml
 
     ---
-    plan:
-      name: MyWorkFlow
+    name: MyWorkFlow
+    version: 1.0
+
+    activities:
+    - name: MyAct1
       version: 1.0
 
-      activities:
-      - name: MyAct1
-        version: 1.0
-
-      steps:
-      - name: MyStep1
-        input: |
-            Input passed to MyAct1
-        activity: MyAct1
+    steps:
+    - name: MyStep1
+      input: |
+          Input passed to MyAct1
+      activity: MyAct1
 
 This simple plan tells the decider to schedule a single activity, `"MyAct1"`,
 and when it completes, mark the workflow as completed.
@@ -77,25 +76,24 @@ We can make the plan a little more interesting by adding multiple steps.
 .. code-block:: yaml
 
     ---
-    plan:
-      name: MyWorkFlow
+    name: MyWorkFlow
+    version: 1.0
+
+    activities:
+    - name: MyAct1
+      version: 1.0
+    - name: MyAct2
+      version: 1.0
+    - name: MyAct3
       version: 1.0
 
-      activities:
-      - name: MyAct1
-        version: 1.0
-      - name: MyAct2
-        version: 1.0
-      - name: MyAct3
-        version: 1.0
-
-      steps:
-      - name: MyStep1
-        activity: MyAct1
-      - name: MyStep2
-        activity: MyAct2
-      - name: MyStep3
-        activity: MyAct3
+    steps:
+    - name: MyStep1
+      activity: MyAct1
+    - name: MyStep2
+      activity: MyAct2
+    - name: MyStep3
+      activity: MyAct3
 
 This extands the plan by defining 2 more steps using 2 new acticities.
 

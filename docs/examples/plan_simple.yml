@@ -32,7 +32,7 @@ activities:
   version: "1.0"                    # Activity version in SWF
   input_spec:                       # JSON-Schema input
     type: object
-    properties":
+    properties:
       input:
         type: "string"
     required:
