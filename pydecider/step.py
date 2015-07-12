@@ -7,6 +7,7 @@ import logging
 import jinja2
 import jinja2.meta
 
+from .state_status import StepStateStatus
 from .step_results import (
     ActivityStepResult,
     TemplatedStepResult,
@@ -39,7 +40,6 @@ class Step(object):
 
     @staticmethod
     def _resolve_parent(parent_def):
-        from .state import StepStateStatus
 
         if isinstance(parent_def, basestring):
             return (parent_def, StepStateStatus.completed)
@@ -195,7 +195,7 @@ class TemplatedStep(Step):
     def prepare(self, context):
         return self.eval_block.render(context)
 
-    def run(self, step_input):
+    def run(self, _step_input):
         return TemplatedStepResult()
 
     def render(self, _output):
