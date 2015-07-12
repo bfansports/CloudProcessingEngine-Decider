@@ -4,12 +4,12 @@ import logging
 
 from .step import Step
 from .activity import Activity
-from .schema import SchemaValidated
+from .schema import SchemaValidator
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class Plan(SchemaValidated):
+class Plan(object):
     """Workflow plan.
     """
 
@@ -17,17 +17,20 @@ class Plan(SchemaValidated):
                  'version',
                  'steps',
                  'activities',
+                 '_input_validator',
                  '__weakref__')
 
     def __init__(self, name, version,
                  input_spec=None, steps=(), activities=()):
+
         self.name = name
         self.version = version
         self.steps = list(steps)
         self.activities = dict(activities)
+        self._input_validator = SchemaValidator(input_spec=input_spec)
 
-        if input_spec:
-            self.init_validator(input_spec)
+    def check_input(self, plan_input):
+        return self._input_validator.validate(plan_input)
 
     @classmethod
     def from_data(cls, plan_data):

@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+
 import logging
 
-from .schema import SchemaValidated
+from .schema import SchemaValidator
 
 import yaql
 import yaql.exceptions
@@ -8,7 +10,7 @@ import yaql.exceptions
 _LOGGER = logging.getLogger(__name__)
 
 
-class Activity(SchemaValidated):
+class Activity(object):
     """Activity abstraction.
 
     Attributes:
@@ -46,10 +48,10 @@ class Activity(SchemaValidated):
     def __init__(self, name, version,
                  input_spec=None, outputs_spec=None,
                  task_list=None,
-                 heartbeat_timeout=None,
-                 schedule_to_close_timeout=None,
-                 schedule_to_start_timeout=None,
-                 start_to_close_timeout=None):
+                 heartbeat_timeout='60',
+                 schedule_to_close_timeout='300',
+                 schedule_to_start_timeout='30',
+                 start_to_close_timeout='300'):
 
         self.name = name
         self.version = version
@@ -61,25 +63,12 @@ class Activity(SchemaValidated):
             )
         self.task_list = task_list
 
-        if heartbeat_timeout is None:
-            heartbeat_timeout = '60'
         self.heartbeat_timeout = heartbeat_timeout
-
-        if schedule_to_close_timeout is None:
-            schedule_to_close_timeout = '300'
         self.schedule_to_close_timeout = schedule_to_close_timeout
-
-        if schedule_to_start_timeout is None:
-            schedule_to_start_timeout = '30'
         self.schedule_to_start_timeout = schedule_to_start_timeout
-
-        if start_to_close_timeout is None:
-            start_to_close_timeout = '300'
         self.start_to_close_timeout = start_to_close_timeout
 
-        if input_spec:
-            self.init_validator(input_spec)
-
+        self._input_validator = SchemaValidator(input_spec)
         if outputs_spec:
             try:
                 self._outputs_spec = {key: yaql.parse(expr)
@@ -104,27 +93,26 @@ class Activity(SchemaValidated):
             for key, expr in self._outputs_spec.items()
         }
 
+    def check_input(self, activity_input):
+        return self._input_validator.validate(activity_input)
+
     @classmethod
-    def from_data(cls, activity_data):
+    def from_data(cls, data):
         """Define an `Activity` from a dictionary of attributes.
         """
         # TODO: Add JSONSchema validation of activity_data
-        return cls(
-            name=activity_data['name'],
-            version=activity_data['version'],
-            input_spec=activity_data.get('input_spec', None),
-            outputs_spec=activity_data.get('outputs_spec', None),
-            task_list=activity_data.get('task_list', None),
-            heartbeat_timeout=activity_data.get(
-                'heartbeat_timeout', None
-            ),
-            schedule_to_close_timeout=activity_data.get(
-                'schedule_to_close_timeout', None
-            ),
-            schedule_to_start_timeout=activity_data.get(
-                'schedule_to_start_timeout', None
-            ),
-            start_to_close_timeout=activity_data.get(
-                'start_to_close_timeout', None
-            ),
-        )
+        activity_data = {
+            'name': data['name'],
+            'version': data['version'],
+            'input_spec': data.get('input_spec', None),
+            'outputs_spec': data.get('outputs_spec', None),
+            'task_list': data.get('task_list', None),
+        }
+
+        # Copy in all SWF activity options.
+        for option in ('heartbeat_timeout', 'schedule_to_close_timeout',
+                       'schedule_to_start_timeout', 'start_to_close_timeout'):
+            if option in data:
+                activity_data[option] = data[option]
+
+        return cls(**activity_data)

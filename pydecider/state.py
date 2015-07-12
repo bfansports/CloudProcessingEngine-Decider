@@ -1,11 +1,14 @@
 from __future__ import absolute_import
 
-import enum
 import weakref
 import logging
 import collections
 
-from . import step
+from .state_status import (
+    StateStatus,
+    StepStateStatus,
+)
+from .step import Step
 
 _LOGGER = logging.getLogger(__name__)
 INIT_STEP = '$init'
@@ -16,7 +19,7 @@ class DeciderStepResult(object):
     pass
 
 
-class DeciderStep(step.Step):
+class DeciderStep(Step):
     def run(self, _step_input):
         return DeciderStepResult()
 
@@ -28,31 +31,15 @@ class DeciderStep(step.Step):
         return output
 
 
-class StateStatus(enum.Enum):
-    """Enumeration of the possible :class:`State` statuses."""
-    #: Pristin empty status.
-    init = 0
-    #: Input has been set and Steps are running or ready.
-    running = 1
-    #: All Steps are in the completed status or one was aborted.
-    completed = 2
-    #: All steps completed as successful.
-    succeeded = completed | 4
-    #: Step completed in failure.
-    failed = completed | 8
-
-    def means(self, status):
-        return (self.value & status.value) == status.value
-
-
 class State(object):
-    __slots__ = ('status',
-                 'step_states',
-                 '_context',
-                 '_orphaned_steps',
-                 '_init_step',
-                 '_end_step',
-                 )
+    __slots__ = (
+        'status',
+        'step_states',
+        '_context',
+        '_orphaned_steps',
+        '_init_step',
+        '_end_step',
+    )
 
     def __init__(self):
         """Init state"""
@@ -61,12 +48,16 @@ class State(object):
         self._context = None
         self._orphaned_steps = {}
         # Add an INIT/END fake steps
-        self._init_step = StepState(step=DeciderStep(INIT_STEP),
-                                    status='running',
-                                    context='__init__')
-        self._end_step = StepState(step=DeciderStep(END_STEP,
-                                   requires=[(INIT_STEP, 'completed')]),
-                                   context='__init__')
+        self._init_step = StepState(
+            step=DeciderStep(INIT_STEP),
+            status='running',
+            context='__init__'
+        )
+        self._end_step = StepState(
+            step=DeciderStep(END_STEP,
+                             requires=[(INIT_STEP, 'completed')]),
+            context='__init__'
+        )
         self._stepstate_insert(self._init_step)
         self._stepstate_insert(self._end_step)
 
@@ -89,10 +80,10 @@ class State(object):
         return self
 
     def __enter__(self):
-        assert(self._context is not None)
+        assert self._context is not None
 
     def __exit__(self, exc_type, exc_value, traceback):
-        assert(self._context is not None)
+        assert self._context is not None
         # Only clear the context is we didn't encounter an exception. Otherwise
         # keep it for debug purposes
         if exc_type is None:
@@ -103,14 +94,14 @@ class State(object):
     def set_abort(self):
         """Abort the state machine.
         """
-        assert(self._context is not None)
+        assert self._context is not None
         self.step_update(END_STEP, 'aborted')
 
     def set_input(self, input_data):
         """Set the input of the state machine.
         """
-        assert(self._context is not None)
-        assert(self.status is StateStatus.init)
+        assert self._context is not None
+        assert self.status is StateStatus.init
 
         self.step_update(INIT_STEP, 'completed', new_data=input_data)
         self.status = StateStatus.running
@@ -118,7 +109,7 @@ class State(object):
     def step_update(self, step_name, new_status, new_data=None):
         """Update a Step with new status and, optionally, output data.
         """
-        assert(self._context is not None)
+        assert self._context is not None
         step_state = self.step_states[step_name]
         step_state.update(new_status,
                           context=self._context,
@@ -132,7 +123,7 @@ class State(object):
     def step_insert(self, step):
         """Add a step definition to the state.
         """
-        assert(self._context is not None)
+        assert self._context is not None
         step_state = StepState(step, self._context)
         _LOGGER.debug('Defining new step %r in state', step_state)
 
@@ -189,7 +180,7 @@ class State(object):
         return ready_steps
 
     def _stepstate_insert(self, step_state):
-        if (not step_state.step.requires):
+        if not step_state.step.requires:
             self.step_states[step_state.name] = step_state
             return True
 
@@ -213,30 +204,6 @@ class State(object):
                         required, set()
                     ).add(step_state)
             return False
-
-
-class StepStateStatus(enum.Enum):
-    """Enumeration of the possible :class:`StepState` statuses."""
-
-    #: Step is not started yet (may be waiting on dependencies).
-    pending = 0
-    #: Step is ready to be started
-    ready = 1
-    #: Step is running
-    running = 2
-    #: Step was either completed (sucess OR failure) or skipped.
-    completed = 4
-    #: Step resulted in a permanent error.
-    aborted = 8
-    #: Step completed as successful.
-    succeeded = completed | 16
-    #: Step completed in failure.
-    failed = completed | 32
-    #: Step was skipped (will not be run).
-    skipped = completed | 64
-
-    def means(self, status):
-        return (self.value & status.value) == status.value
 
 
 class StepState(object):
@@ -285,7 +252,7 @@ class StepState(object):
     def _prepare(self):
         """Prepare the input from the step input template and the parents data.
         """
-        assert(self.status is StepStateStatus.ready)
+        assert self.status is StepStateStatus.ready
         context = self._build_context()
         render = self.step.prepare(context)
         return render
@@ -322,7 +289,7 @@ class StepState(object):
         for parent in self.parents:
             if parent.name is INIT_STEP:
                 continue
-            assert(parent.name in self.step.requires)
+            assert parent.name in self.step.requires
 
             if not parent.is_completed:
                 ready = False
