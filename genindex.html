@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; pydecider 0.1.0 documentation</title>
+    <title>Index &mdash; pydecider 0.1.1 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.0',
+        VERSION:     '0.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="pydecider 0.1.0 documentation" href="index.html" />
+    <link rel="top" title="pydecider 0.1.1 documentation" href="index.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -48,7 +48,6 @@
  | <a href="#F"><strong>F</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
- | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
@@ -62,10 +61,6 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="api/pydecider.html#pydecider.state.StepStateStatus.aborted">aborted (pydecider.state.StepStateStatus attribute)</a>
-  </dt>
-
       
   <dt><a href="api/pydecider.html#pydecider.plan.Plan.activities">activities (pydecider.plan.Plan attribute)</a>
   </dt>
@@ -105,9 +100,15 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api/pydecider.html#pydecider.schema.SchemaValidated.check_input">check_input() (pydecider.schema.SchemaValidated method)</a>
+  <dt><a href="api/pydecider.html#pydecider.activity.Activity.check_input">check_input() (pydecider.activity.Activity method)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="api/pydecider.html#pydecider.plan.Plan.check_input">(pydecider.plan.Plan method)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="api/pydecider.html#pydecider.state.StepState.check_requirements">check_requirements() (pydecider.state.StepState method)</a>
   </dt>
@@ -118,16 +119,6 @@
   <dt><a href="api/pydecider.html#pydecider.state.StepState.children">children (pydecider.state.StepState attribute)</a>
   </dt>
 
-      
-  <dt><a href="api/pydecider.html#pydecider.state.StateStatus.completed">completed (pydecider.state.StateStatus attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="api/pydecider.html#pydecider.state.StepStateStatus.completed">(pydecider.state.StepStateStatus attribute)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -203,18 +194,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api/pydecider.html#pydecider.state.StateStatus.failed">failed (pydecider.state.StateStatus attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="api/pydecider.html#pydecider.state.StepStateStatus.failed">(pydecider.state.StepStateStatus attribute)</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
   <dt><a href="api/pydecider.html#pydecider.activity.Activity.from_data">from_data() (pydecider.activity.Activity class method)</a>
   </dt>
 
@@ -251,14 +230,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api/pydecider.html#pydecider.state.StateStatus.init">init (pydecider.state.StateStatus attribute)</a>
-  </dt>
-
-      
-  <dt><a href="api/pydecider.html#pydecider.schema.SchemaValidated.init_validator">init_validator() (pydecider.schema.SchemaValidated method)</a>
-  </dt>
-
-      
   <dt><a href="api/pydecider.html#pydecider.state.StepState.input">input (pydecider.state.StepState attribute)</a>
   </dt>
 
@@ -266,12 +237,12 @@
   <dt><a href="api/pydecider.html#pydecider.step.ActivityStep.input_template">input_template (pydecider.step.ActivityStep attribute)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/pydecider.html#pydecider.state.StepState.is_completed">is_completed (pydecider.state.StepState attribute)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/pydecider.html#pydecider.state_machine.StateMachine.is_failed">is_failed (pydecider.state_machine.StateMachine attribute)</a>
   </dt>
@@ -284,22 +255,6 @@
   <dt><a href="api/pydecider.html#pydecider.state_machine.StateMachine.is_succeeded">is_succeeded (pydecider.state_machine.StateMachine attribute)</a>
   </dt>
 
-  </dl></td>
-</tr></table>
-
-<h2 id="M">M</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="api/pydecider.html#pydecider.state.StateStatus.means">means() (pydecider.state.StateStatus method)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="api/pydecider.html#pydecider.state.StepStateStatus.means">(pydecider.state.StepStateStatus method)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -350,10 +305,6 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/pydecider.html#pydecider.state.StepState.parents">parents (pydecider.state.StepState attribute)</a>
-  </dt>
-
-      
-  <dt><a href="api/pydecider.html#pydecider.state.StepStateStatus.pending">pending (pydecider.state.StepStateStatus attribute)</a>
   </dt>
 
       
@@ -431,10 +382,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api/pydecider.html#pydecider.state.StepStateStatus.ready">ready (pydecider.state.StepStateStatus attribute)</a>
-  </dt>
-
-      
   <dt><a href="api/pydecider.html#pydecider.register.register">register() (in module pydecider.register)</a>
   </dt>
 
@@ -457,7 +404,7 @@
 
       </dl></dd>
       
-  <dt><a href="api/pydecider.html#pydecider.activity.Activity.render_output">render_output() (pydecider.activity.Activity method)</a>
+  <dt><a href="api/pydecider.html#pydecider.activity.Activity.render_outputs">render_outputs() (pydecider.activity.Activity method)</a>
   </dt>
 
   </dl></td>
@@ -492,16 +439,6 @@
   </dt>
 
       </dl></dd>
-      
-  <dt><a href="api/pydecider.html#pydecider.state.StateStatus.running">running (pydecider.state.StateStatus attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="api/pydecider.html#pydecider.state.StepStateStatus.running">(pydecider.state.StepStateStatus attribute)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -521,7 +458,7 @@
   </dt>
 
       
-  <dt><a href="api/pydecider.html#pydecider.schema.SchemaValidated">SchemaValidated (class in pydecider.schema)</a>
+  <dt><a href="api/pydecider.html#pydecider.schema.SchemaValidator">SchemaValidator (class in pydecider.schema)</a>
   </dt>
 
       
@@ -530,10 +467,6 @@
 
       
   <dt><a href="api/pydecider.html#pydecider.state.State.set_input">set_input() (pydecider.state.State method)</a>
-  </dt>
-
-      
-  <dt><a href="api/pydecider.html#pydecider.state.StepStateStatus.skipped">skipped (pydecider.state.StepStateStatus attribute)</a>
   </dt>
 
       
@@ -550,10 +483,6 @@
 
       
   <dt><a href="api/pydecider.html#pydecider.state_machine.StateMachine">StateMachine (class in pydecider.state_machine)</a>
-  </dt>
-
-      
-  <dt><a href="api/pydecider.html#pydecider.state.StateStatus">StateStatus (class in pydecider.state)</a>
   </dt>
 
       
@@ -609,20 +538,6 @@
   </dt>
 
       
-  <dt><a href="api/pydecider.html#pydecider.state.StepStateStatus">StepStateStatus (class in pydecider.state)</a>
-  </dt>
-
-      
-  <dt><a href="api/pydecider.html#pydecider.state.StateStatus.succeeded">succeeded (pydecider.state.StateStatus attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="api/pydecider.html#pydecider.state.StepStateStatus.succeeded">(pydecider.state.StepStateStatus attribute)</a>
-  </dt>
-
-      </dl></dd>
-      
   <dt><a href="api/pydecider.html#pydecider.swf_decider.SWFDecider">SWFDecider (class in pydecider.swf_decider)</a>
   </dt>
 
@@ -662,6 +577,10 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api/pydecider.html#pydecider.schema.SchemaValidator.validate">validate() (pydecider.schema.SchemaValidator method)</a>
+  </dt>
+
       
   <dt><a href="api/pydecider.html#pydecider.schema.ValidationError">ValidationError</a>
   </dt>

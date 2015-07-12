@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pydecider package &mdash; pydecider 0.1.0 documentation</title>
+    <title>pydecider package &mdash; pydecider 0.1.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.0',
+        VERSION:     '0.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="pydecider 0.1.0 documentation" href="../index.html" />
+    <link rel="top" title="pydecider 0.1.1 documentation" href="../index.html" />
     <link rel="up" title="pydecider" href="modules.html" />
     <link rel="prev" title="pydecider" href="modules.html" />
    
@@ -47,8 +47,8 @@
 <span id="pydecider-activity-module"></span><h2>pydecider.activity module<a class="headerlink" href="#module-pydecider.activity" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pydecider.activity.Activity">
-<em class="property">class </em><code class="descclassname">pydecider.activity.</code><code class="descname">Activity</code><span class="sig-paren">(</span><em>name</em>, <em>version</em>, <em>input_spec=None</em>, <em>outputs_spec=None</em>, <em>task_list=None</em>, <em>heartbeat_timeout=None</em>, <em>schedule_to_close_timeout=None</em>, <em>schedule_to_start_timeout=None</em>, <em>start_to_close_timeout=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.activity.Activity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pydecider.schema.SchemaValidated" title="pydecider.schema.SchemaValidated"><code class="xref py py-class docutils literal"><span class="pre">pydecider.schema.SchemaValidated</span></code></a></p>
+<em class="property">class </em><code class="descclassname">pydecider.activity.</code><code class="descname">Activity</code><span class="sig-paren">(</span><em>name</em>, <em>version</em>, <em>input_spec=None</em>, <em>outputs_spec=None</em>, <em>task_list=None</em>, <em>heartbeat_timeout='60'</em>, <em>schedule_to_close_timeout='300'</em>, <em>schedule_to_start_timeout='30'</em>, <em>start_to_close_timeout='300'</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.activity.Activity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Activity abstraction.</p>
 <dl class="attribute">
 <dt id="pydecider.activity.Activity.name">
@@ -113,9 +113,14 @@ activity tasks.</p>
 <span class="go">&#39;MyActivity&#39;</span>
 </pre></div>
 </div>
+<dl class="method">
+<dt id="pydecider.activity.Activity.check_input">
+<code class="descname">check_input</code><span class="sig-paren">(</span><em>activity_input</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.activity.Activity.check_input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="classmethod">
 <dt id="pydecider.activity.Activity.from_data">
-<em class="property">classmethod </em><code class="descname">from_data</code><span class="sig-paren">(</span><em>activity_data</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.activity.Activity.from_data" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">from_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.activity.Activity.from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define an <cite>Activity</cite> from a dictionary of attributes.</p>
 </dd></dl>
 
@@ -130,8 +135,8 @@ activity tasks.</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pydecider.activity.Activity.render_output">
-<code class="descname">render_output</code><span class="sig-paren">(</span><em>output</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.activity.Activity.render_output" title="Permalink to this definition">¶</a></dt>
+<dt id="pydecider.activity.Activity.render_outputs">
+<code class="descname">render_outputs</code><span class="sig-paren">(</span><em>output</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.activity.Activity.render_outputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use the <cite>Activity</cite>&#8216;s <cite>outputs_spec</cite> to generate all the defined
 representation of this activity&#8217;s output.</p>
 </dd></dl>
@@ -169,17 +174,23 @@ representation of this activity&#8217;s output.</p>
 <dl class="class">
 <dt id="pydecider.plan.Plan">
 <em class="property">class </em><code class="descclassname">pydecider.plan.</code><code class="descname">Plan</code><span class="sig-paren">(</span><em>name</em>, <em>version</em>, <em>input_spec=None</em>, <em>steps=()</em>, <em>activities=()</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.plan.Plan" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pydecider.schema.SchemaValidated" title="pydecider.schema.SchemaValidated"><code class="xref py py-class docutils literal"><span class="pre">pydecider.schema.SchemaValidated</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Workflow plan.</p>
 <dl class="attribute">
 <dt id="pydecider.plan.Plan.activities">
 <code class="descname">activities</code><a class="headerlink" href="#pydecider.plan.Plan.activities" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="pydecider.plan.Plan.check_input">
+<code class="descname">check_input</code><span class="sig-paren">(</span><em>plan_input</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.plan.Plan.check_input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="classmethod">
 <dt id="pydecider.plan.Plan.from_data">
 <em class="property">classmethod </em><code class="descname">from_data</code><span class="sig-paren">(</span><em>plan_data</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.plan.Plan.from_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Define a plan from a dictionary of attributes.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="pydecider.plan.Plan.name">
@@ -217,17 +228,12 @@ representation of this activity&#8217;s output.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="pydecider.schema.SchemaValidated">
-<em class="property">class </em><code class="descclassname">pydecider.schema.</code><code class="descname">SchemaValidated</code><a class="headerlink" href="#pydecider.schema.SchemaValidated" title="Permalink to this definition">¶</a></dt>
+<dt id="pydecider.schema.SchemaValidator">
+<em class="property">class </em><code class="descclassname">pydecider.schema.</code><code class="descname">SchemaValidator</code><span class="sig-paren">(</span><em>input_spec</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.schema.SchemaValidator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <dl class="method">
-<dt id="pydecider.schema.SchemaValidated.check_input">
-<code class="descname">check_input</code><span class="sig-paren">(</span><em>some_input</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.schema.SchemaValidated.check_input" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pydecider.schema.SchemaValidated.init_validator">
-<code class="descname">init_validator</code><span class="sig-paren">(</span><em>specifications</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.schema.SchemaValidated.init_validator" title="Permalink to this definition">¶</a></dt>
+<dt id="pydecider.schema.SchemaValidator.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>some_input</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.schema.SchemaValidator.validate" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -329,48 +335,6 @@ representation of this activity&#8217;s output.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="pydecider.state.StateStatus">
-<em class="property">class </em><code class="descclassname">pydecider.state.</code><code class="descname">StateStatus</code><a class="headerlink" href="#pydecider.state.StateStatus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
-<p>Enumeration of the possible <a class="reference internal" href="#pydecider.state.State" title="pydecider.state.State"><code class="xref py py-class docutils literal"><span class="pre">State</span></code></a> statuses.</p>
-<dl class="attribute">
-<dt id="pydecider.state.StateStatus.completed">
-<code class="descname">completed</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StateStatus.completed" title="Permalink to this definition">¶</a></dt>
-<dd><p>All Steps are in the completed status or one was aborted.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pydecider.state.StateStatus.failed">
-<code class="descname">failed</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StateStatus.failed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Step completed in failure.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pydecider.state.StateStatus.init">
-<code class="descname">init</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StateStatus.init" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pristin empty status.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pydecider.state.StateStatus.means">
-<code class="descname">means</code><span class="sig-paren">(</span><em>status</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state.StateStatus.means" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pydecider.state.StateStatus.running">
-<code class="descname">running</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StateStatus.running" title="Permalink to this definition">¶</a></dt>
-<dd><p>Input has been set and Steps are running or ready.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pydecider.state.StateStatus.succeeded">
-<code class="descname">succeeded</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StateStatus.succeeded" title="Permalink to this definition">¶</a></dt>
-<dd><p>All steps completed as successful.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="pydecider.state.StepState">
 <em class="property">class </em><code class="descclassname">pydecider.state.</code><code class="descname">StepState</code><span class="sig-paren">(</span><em>step</em>, <em>context</em>, <em>status=&lt;StepStateStatus.pending: 0&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state.StepState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
@@ -439,66 +403,6 @@ representation of this activity&#8217;s output.</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="pydecider.state.StepStateStatus">
-<em class="property">class </em><code class="descclassname">pydecider.state.</code><code class="descname">StepStateStatus</code><a class="headerlink" href="#pydecider.state.StepStateStatus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
-<p>Enumeration of the possible <a class="reference internal" href="#pydecider.state.StepState" title="pydecider.state.StepState"><code class="xref py py-class docutils literal"><span class="pre">StepState</span></code></a> statuses.</p>
-<dl class="attribute">
-<dt id="pydecider.state.StepStateStatus.aborted">
-<code class="descname">aborted</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StepStateStatus.aborted" title="Permalink to this definition">¶</a></dt>
-<dd><p>Step resulted in a permanent error.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pydecider.state.StepStateStatus.completed">
-<code class="descname">completed</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StepStateStatus.completed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Step was either completed (sucess OR failure) or skipped.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pydecider.state.StepStateStatus.failed">
-<code class="descname">failed</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StepStateStatus.failed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Step completed in failure.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pydecider.state.StepStateStatus.means">
-<code class="descname">means</code><span class="sig-paren">(</span><em>status</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state.StepStateStatus.means" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pydecider.state.StepStateStatus.pending">
-<code class="descname">pending</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StepStateStatus.pending" title="Permalink to this definition">¶</a></dt>
-<dd><p>Step is not started yet (may be waiting on dependencies).</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pydecider.state.StepStateStatus.ready">
-<code class="descname">ready</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StepStateStatus.ready" title="Permalink to this definition">¶</a></dt>
-<dd><p>Step is ready to be started</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pydecider.state.StepStateStatus.running">
-<code class="descname">running</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StepStateStatus.running" title="Permalink to this definition">¶</a></dt>
-<dd><p>Step is running</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pydecider.state.StepStateStatus.skipped">
-<code class="descname">skipped</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StepStateStatus.skipped" title="Permalink to this definition">¶</a></dt>
-<dd><p>Step was skipped (will not be run).</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pydecider.state.StepStateStatus.succeeded">
-<code class="descname">succeeded</code><em class="property"> = None</em><a class="headerlink" href="#pydecider.state.StepStateStatus.succeeded" title="Permalink to this definition">¶</a></dt>
-<dd><p>Step completed as successful.</p>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-pydecider.state_machine">
 <span id="pydecider-state-machine-module"></span><h2>pydecider.state_machine module<a class="headerlink" href="#module-pydecider.state_machine" title="Permalink to this headline">¶</a></h2>
@@ -519,27 +423,27 @@ representation of this activity&#8217;s output.</p>
 
 <dl class="method">
 <dt id="pydecider.state_machine.StateMachine.EVENT_ActivityTaskStarted">
-<code class="descname">EVENT_ActivityTaskStarted</code><span class="sig-paren">(</span><em>_self</em>, <em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state_machine.StateMachine.EVENT_ActivityTaskStarted" title="Permalink to this definition">¶</a></dt>
+<code class="descname">EVENT_ActivityTaskStarted</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state_machine.StateMachine.EVENT_ActivityTaskStarted" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="pydecider.state_machine.StateMachine.EVENT_DecisionTaskCompleted">
-<code class="descname">EVENT_DecisionTaskCompleted</code><span class="sig-paren">(</span><em>_self</em>, <em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state_machine.StateMachine.EVENT_DecisionTaskCompleted" title="Permalink to this definition">¶</a></dt>
+<code class="descname">EVENT_DecisionTaskCompleted</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state_machine.StateMachine.EVENT_DecisionTaskCompleted" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="pydecider.state_machine.StateMachine.EVENT_DecisionTaskScheduled">
-<code class="descname">EVENT_DecisionTaskScheduled</code><span class="sig-paren">(</span><em>_self</em>, <em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state_machine.StateMachine.EVENT_DecisionTaskScheduled" title="Permalink to this definition">¶</a></dt>
+<code class="descname">EVENT_DecisionTaskScheduled</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state_machine.StateMachine.EVENT_DecisionTaskScheduled" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="pydecider.state_machine.StateMachine.EVENT_DecisionTaskStarted">
-<code class="descname">EVENT_DecisionTaskStarted</code><span class="sig-paren">(</span><em>_self</em>, <em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state_machine.StateMachine.EVENT_DecisionTaskStarted" title="Permalink to this definition">¶</a></dt>
+<code class="descname">EVENT_DecisionTaskStarted</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state_machine.StateMachine.EVENT_DecisionTaskStarted" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="pydecider.state_machine.StateMachine.EVENT_DecisionTaskTimedOut">
-<code class="descname">EVENT_DecisionTaskTimedOut</code><span class="sig-paren">(</span><em>_self</em>, <em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state_machine.StateMachine.EVENT_DecisionTaskTimedOut" title="Permalink to this definition">¶</a></dt>
+<code class="descname">EVENT_DecisionTaskTimedOut</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.state_machine.StateMachine.EVENT_DecisionTaskTimedOut" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -715,7 +619,7 @@ representation of this activity&#8217;s output.</p>
 
 <dl class="method">
 <dt id="pydecider.step.TemplatedStep.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>step_input</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.step.TemplatedStep.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><em>_step_input</em><span class="sig-paren">)</span><a class="headerlink" href="#pydecider.step.TemplatedStep.run" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
