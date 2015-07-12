@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function
+)
+
 import argparse
 import logging
 import os
 import sys
 
 import boto.swf.layer2 as swf
-from boto.swf.exceptions import SWFTypeAlreadyExistsError, SWFDomainAlreadyExistsError
 
 sys.path.append(
     os.path.realpath(
@@ -18,6 +23,7 @@ sys.path.append(
 )
 
 from pydecider.register import register
+
 
 class Worker(swf.ActivityWorker):
 
@@ -31,7 +37,7 @@ class Worker(swf.ActivityWorker):
     def run(self):
         activity_task = self.poll()
         if 'activityId' in activity_task:
-            print '%s: %r' % (self.task_list, activity_task)
+            print('%s: %r' % (self.task_list, activity_task))
             self.complete()
         return True
 
@@ -47,11 +53,12 @@ def main():
     register(activities=[(args.activity, args.version)])
 
     worker = Worker(args.domain, args.task_list)
-    while worker.run(): pass
+
+    while worker.run():
+        pass
 
 
 if __name__ == '__main__':
-    import logging
     logging.basicConfig(level=logging.DEBUG)
 
     main()

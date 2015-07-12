@@ -1,8 +1,11 @@
 """Schema implementation based on JSONSchema v4 draft
 """
 
-from __future__ import absolute_import
-
+from __future__ import (
+    absolute_import,
+    division,
+    print_function
+)
 
 import logging
 
@@ -33,7 +36,8 @@ class SchemaValidator(object):
     def validate(self, some_input):
         if self._input_validator is not None:
             try:
-                return self._input_validator.validate(some_input)
+                self._input_validator.validate(some_input)
+                return True
 
             except jsonschema.ValidationError:
                 raise

@@ -1,4 +1,8 @@
-from __future__ import absolute_import
+from __future__ import (
+    absolute_import,
+    division,
+    print_function
+)
 
 import logging
 
@@ -36,6 +40,60 @@ class Activity(object):
         'MyActivity'
 
     """
+
+    _DATA_SCHEMA = {
+        '$schema': 'http://json-schema.org/draft-04/schema#',
+        'type': 'object',
+        'properties': {
+            'name': {
+                'type': 'string',
+            },
+            'version': {
+                'type': 'string',
+            },
+            'input_spec': {
+                'oneOf': [
+                    {'type': 'null'},
+                    {'$ref': '#/definitions/input_spec'},
+                ],
+            },
+            'outputs_spec': {
+                'oneOf': [
+                    {'type': 'null'},
+                    {'$ref': '#/definitions/outputs_spec'},
+                ]
+            },
+            'task_list': {
+                'type': 'string',
+            },
+            'heartbeat_timeout': {
+                'type': 'integer',
+            },
+            'schedule_to_close_timeout': {
+                'type': 'integer',
+            },
+            'schedule_to_start_timeout': {
+                'type': 'integer',
+            },
+            'start_to_close_timeout': {
+                'type': 'integer',
+            },
+        },
+        'additionalProperties': False,
+        'definitions': {
+            'input_spec': {
+                '$ref': 'http://json-schema.org/draft-04/schema#',
+            },
+            'outputs_spec': {
+                'type': 'object',
+                'patternProperties': {
+                    '^[a-zA-Z0-9]+$': {}
+                },
+                'minProperties': 1,
+                'additionalProperties': False,
+            },
+        },
+    }
 
     __slots__ = ('name', 'version',
                  'task_list',
@@ -84,7 +142,7 @@ class Activity(object):
     def __repr__(self):
         return 'Activity(name={name!r})'.format(name=self.name)
 
-    def render_output(self, output):
+    def render_outputs(self, output):
         """Use the `Activity`'s `outputs_spec` to generate all the defined
         representation of this activity's output.
         """
@@ -100,7 +158,9 @@ class Activity(object):
     def from_data(cls, data):
         """Define an `Activity` from a dictionary of attributes.
         """
-        # TODO: Add JSONSchema validation of activity_data
+        validator = SchemaValidator(cls._DATA_SCHEMA)
+        validator.validate(data)
+
         activity_data = {
             'name': data['name'],
             'version': data['version'],
