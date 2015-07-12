@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function
+)
+
 import argparse
 import logging
 import os
@@ -47,10 +53,11 @@ def main():
              workflows=((p.name, p.version),))
 
     d = Decider(domain=args.domain, task_list=args.task_list, plan=p)
-    while d.run(): pass
+
+    while d.run():
+        pass
 
 
 if __name__ == '__main__':
-    import logging
     logging.basicConfig(level=logging.DEBUG)
     main()

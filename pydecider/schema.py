@@ -1,8 +1,11 @@
 """Schema implementation based on JSONSchema v4 draft
 """
 
-from __future__ import absolute_import
-
+from __future__ import (
+    absolute_import,
+    division,
+    print_function
+)
 
 import logging
 
