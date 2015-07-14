@@ -18,7 +18,6 @@ steps:
     input: |
       {
         "client": {{__input__.client}},
-        "workflow": {{__input__.workflow}},
         "input_asset": {{__input__.input_asset}},
         "input_asset_metadata": {{ValidateAssetStep.metadata}},
         "output_asset": {{__input__.output_asset}}
