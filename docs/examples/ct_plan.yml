@@ -17,7 +17,7 @@ steps:
       - ["ValidateAssetStep", 'succeeded']
     input: |
       {
-        "workflow": {{__input__.workflow}},
+        "client": {{__input__.client}},
         "input_asset": {{__input__.input_asset}},
         "input_asset_metadata": {{ValidateAssetStep.metadata}},
         "output_asset": {{__input__.output_asset}}
@@ -29,11 +29,6 @@ activities:
     version: "v2"
     input_spec:                 # JSON-Schema input validation
       type: object
-      properties:
-      input:
-        type: object
-      required:
-      - input
     outputs_spec:
       metadata: "$"
 
@@ -44,8 +39,6 @@ activities:
       properties:
         client:
           type: object
-        workflow:
-          type: object
         input_asset:
           type: object
         input_asset_metadata:
@@ -54,7 +47,6 @@ activities:
           type: object
       required:                 # Required input
       - client
-      - workflow
       - input_asset
       - input_asset_metadata
       - output_asset
