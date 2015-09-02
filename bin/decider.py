@@ -33,7 +33,14 @@ def main():
     parser.add_argument('--plan', required=True, help='The location of your Plan file')
     parser.add_argument('--plan_name', required=False, help='If you want to override the plan name in your Plan file')
     parser.add_argument('--plan_version', required=False, help='If you want to override the plan version in your Plan file')
+    parser.add_argument('--log_file', required=False, help='Location of the log file')
     args = parser.parse_args()
+    
+    log_file = "/var/tmp/logs/cpe/decider.log"
+    if args.log_file:
+        log_file = args.log_file
+    logging.basicConfig(level=logging.DEBUG,
+                        filename=log_file)
 
     # Load the main plan data
     with open(args.plan) as f:
@@ -57,8 +64,5 @@ def main():
     while d.run():
         pass
 
-
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG,
-                        filename="/var/tmp/logs/cpe/decider.log")
     main()
