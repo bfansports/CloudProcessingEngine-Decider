@@ -23,15 +23,20 @@ class Activity(object):
         task_list (str): Name of the  SWF `task_list` to use when submitting
                          activity tasks.
         heartbeat_timeout (str): SWF 'heartbeat_timeout' value.
-        schedule_to_start_timeout (str): SWF 'schedule_to_start_timeout' value.
         schedule_to_close_timeout (str): SWF 'schedule_to_close_timeout' value.
+        schedule_to_start_timeout (str): SWF 'schedule_to_start_timeout' value.
         start_to_close_timeout (str): SWF 'start_to_close_timeout' value.
 
     Examples:
         >>> a = activity.Activity.from_data(
         ...     {
         ...         'name': 'MyActivity',
-        ...         'version': '1.0'
+        ...         'version': '1.0',
+        ...         'task_list': 'TranscodeAsset',
+        ...         'heartbeat_timeout: '60',
+        ...         'schedule_to_close_timeout': '518400',
+        ...         'schedule_to_start_timeout': '43200',
+        ...         'start_to_close_timeout': '432000'
         ...     }
         ... )
         >>> a
