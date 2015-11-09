@@ -111,10 +111,10 @@ class Activity(object):
     def __init__(self, name, version,
                  input_spec=None, outputs_spec=None,
                  task_list=None,
-                 heartbeat_timeout=60,
-                 schedule_to_close_timeout=518400,
-                 schedule_to_start_timeout=43200,
-                 start_to_close_timeout=432000):
+                 heartbeat_timeout='60',
+                 schedule_to_close_timeout='518400',
+                 schedule_to_start_timeout='43200',
+                 start_to_close_timeout='432000'):
 
         self.name = name
         self.version = version
