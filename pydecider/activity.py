@@ -33,7 +33,7 @@ class Activity(object):
         ...         'name': 'MyActivity',
         ...         'version': '1.0',
         ...         'task_list': 'TranscodeAsset',
-        ...         'heartbeat_timeout: '60',
+        ...         'heartbeat_timeout': '60',
         ...         'schedule_to_close_timeout': '518400',
         ...         'schedule_to_start_timeout': '43200',
         ...         'start_to_close_timeout': '432000'
@@ -72,16 +72,16 @@ class Activity(object):
                 'type': 'string',
             },
             'heartbeat_timeout': {
-                'type': 'integer',
+                'type': 'string',
             },
             'schedule_to_close_timeout': {
-                'type': 'integer',
+                'type': 'string',
             },
             'schedule_to_start_timeout': {
-                'type': 'integer',
+                'type': 'string',
             },
             'start_to_close_timeout': {
-                'type': 'integer',
+                'type': 'string',
             },
         },
         'additionalProperties': False,
