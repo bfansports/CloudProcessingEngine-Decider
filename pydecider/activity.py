@@ -67,16 +67,16 @@ class Activity(object):
                 'type': 'string',
             },
             'heartbeat_timeout': {
-                'type': 'integer',
+                'type': 'string',
             },
             'schedule_to_close_timeout': {
-                'type': 'integer',
+                'type': 'string',
             },
             'schedule_to_start_timeout': {
-                'type': 'integer',
+                'type': 'string',
             },
             'start_to_close_timeout': {
-                'type': 'integer',
+                'type': 'string',
             },
         },
         'additionalProperties': False,
