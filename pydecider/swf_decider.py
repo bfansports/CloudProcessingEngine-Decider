@@ -6,8 +6,10 @@ from __future__ import (
 
 import json
 import logging
+import time
 
 import boto.swf.layer2 as swf
+import boto.sqs.connection as sqs
 
 from .state_machine import StateMachine
 
@@ -19,12 +21,14 @@ class SWFDecider(swf.Decider):
     name = 'generic'
     version = '1.0'
 
-    def __init__(self, domain, task_list, plan=None):
+    def __init__(self, domain, task_list, output_queue, plan=None):
         self.domain = domain
         self.task_list = task_list
         super(SWFDecider, self).__init__()
 
         self.statemachine = StateMachine(plan)
+        self.sqs = sqs.SQSConnection()
+        self.output_queue = output_queue
 
     def run(self):
         decision_task = self.poll()
@@ -41,13 +45,13 @@ class SWFDecider(swf.Decider):
                     events.extend(decision_task['events'])
 
             # Compute decision based on events
-            decisions = self._run(events)
+            decisions = self._run(events, decision_task['workflowExecution'])
             self.complete(decisions=decisions)
 
         _LOGGER.debug('Tic')
         return True
 
-    def _run(self, events):
+    def _run(self, events, workflowExecution):
         # Run the statemachine on the events
         results = self.statemachine.eval(events)
 
@@ -64,6 +68,13 @@ class SWFDecider(swf.Decider):
 
         elif self.statemachine.is_failed:
             # FIXME: Improve error reporting
+            self.sqs.send_message(self.output_queue, json.dumps({
+                'time': time.time(),
+                'type': 'WORKFLOW_FAILED',
+                'data': {
+                    'workflow': workflowExecution
+                }
+            }))
             decisions.fail_workflow_execution(reason='State machine aborted')
             return decisions
 
@@ -76,6 +87,19 @@ class SWFDecider(swf.Decider):
                 if next_step.activity_input is not None
                 else None
             )
+
+            self.sqs.send_message(self.output_queue, json.dumps({
+                'time': time.time(),
+                'type': 'ACTIVITY_SCHEDULED',
+                'data': {
+                    'workflow': workflowExecution,
+                    'activity': {
+                        'activityId': next_step.name,
+                        'activityType': activity.name,
+                        'activityVersion': activity.version
+                    }
+                }
+            }))
             decisions.schedule_activity_task(
                 activity_id=next_step.name,
                 activity_type_name=activity.name,
