@@ -31,7 +31,7 @@ def main():
     parser.add_argument('-d', '--domain', required=True, help='The SWF domain for your workflow')
     parser.add_argument('-t', '--task_list', required=True, help='The Decision TaskList your decider will listen to')
     parser.add_argument('--plan', required=True, help='The location of your Plan file')
-    parser.add_argument('--output_queue', required=True, help='SQS queue to output updates to')
+    parser.add_argument('--output_queue', required=False, help='SQS queue to output updates to')
     parser.add_argument('--plan_name', required=False, help='If you want to override the plan name in your Plan file')
     parser.add_argument('--plan_version', required=False, help='If you want to override the plan version in your Plan file')
     parser.add_argument('--log_file', required=False, help='Location of the log file')
@@ -60,6 +60,14 @@ def main():
     register(domain=args.domain,
              workflows=((p.name, p.version),))
 
+    if 'OUTPUT_QUEUE' in os.environ:
+        output_queue = os.environ['OUTPUT_QUEUE']
+    elif (args.output_queue is not None and
+          args.output_queue != ""):
+        output_queue = args.output_queue
+    else:
+        raise Exception("No 'OUTPUT_QUEUE' provided!");
+        
     d = Decider(domain=args.domain, task_list=args.task_list, plan=p, output_queue=args.output_queue)
 
     while d.run():

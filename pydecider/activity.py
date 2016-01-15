@@ -9,7 +9,6 @@ import logging
 from .schema import SchemaValidator
 
 import yaql
-import yaql.exceptions
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -137,7 +136,7 @@ class Activity(object):
                 self._outputs_spec = {key: yaql.parse(expr)
                                       for key, expr in outputs_spec.items()}
 
-            except yaql.exceptions.YaqlGrammarException as err:
+            except Exception as err:
                 _LOGGER.critical('Invalid YAQL expression in Activity %r: %r',
                                  name, err)
                 raise
