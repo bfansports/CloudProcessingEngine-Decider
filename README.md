@@ -12,7 +12,6 @@ You can use it for your own SWF workflow implementation.
 
 This Decider has been created aspart of a broader project called CPE. The CPE project (https://github.com/sportarchive/CloudProcessingEngine) allows you to process tasks at scale in the Cloud with the use of SWF and SQS.
 
-
 ### How to use it ?
 
 You must write your plan. so head to the Decider documentation here for more info: http://sportarchive.github.io/CloudProcessingEngine-Decider
