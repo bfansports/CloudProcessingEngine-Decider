@@ -29,6 +29,7 @@ class SWFDecider(swf.Decider):
 
         self.statemachine = StateMachine(plan)
         self.sqs = sqs.SQSConnection()
+        
         self.output_queue = sqs_queue.Queue(self.sqs, output_queue)
 
     def run(self):

@@ -67,8 +67,8 @@ def main():
         output_queue = args.output_queue
     else:
         raise Exception("No 'OUTPUT_QUEUE' provided!");
-        
-    d = Decider(domain=args.domain, task_list=args.task_list, plan=p, output_queue=args.output_queue)
+
+    d = Decider(domain=args.domain, task_list=args.task_list, plan=p, output_queue=output_queue)
 
     while d.run():
         pass
