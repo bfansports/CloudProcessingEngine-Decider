@@ -65,6 +65,13 @@ class SWFDecider(swf.Decider):
         decisions = swf.Layer1Decisions()
 
         if self.statemachine.is_succeeded:
+            self.sqs.send_message(self.output_queue, json.jumps({
+                'time': time.time(),
+                'type': 'WORKFLOW_COMPLETED',
+                'data': {
+                    'workflow': workflowExecution
+                }
+            }))
             decisions.complete_workflow_execution(result=None)
             return decisions
 
