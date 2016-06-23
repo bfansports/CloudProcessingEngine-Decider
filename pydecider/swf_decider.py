@@ -65,7 +65,7 @@ class SWFDecider(swf.Decider):
         decisions = swf.Layer1Decisions()
 
         if self.statemachine.is_succeeded:
-            self.sqs.send_message(self.output_queue, json.jumps({
+            self.sqs.send_message(self.output_queue, json.dumps({
                 'time': time.time(),
                 'type': 'WORKFLOW_COMPLETED',
                 'data': {
@@ -89,6 +89,7 @@ class SWFDecider(swf.Decider):
 
         # We are still going, start any ready activity
         for next_step in results:
+
             activity = next_step.activity
             # FIXME: We are assuming JSON activity input here
             activity_input = (
