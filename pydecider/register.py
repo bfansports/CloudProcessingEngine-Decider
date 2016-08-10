@@ -19,10 +19,14 @@ def register(domain='test', workflows=(), activities=()):
     registerables = []
     registerables.append(swf.Domain(name=domain))
 
-    for (workflow_name, workflow_version) in workflows:
+    for (workflow_name, workflow_version,
+         default_execution_start_to_close_timeout,
+         default_task_start_to_close_timeout) in workflows:
         registerables.append(
             swf.WorkflowType(domain=domain,
                              name=workflow_name,
+                             default_execution_start_to_close_timeout=default_execution_start_to_close_timeout,
+                             default_task_start_to_close_timeout=default_task_start_to_close_timeout,
                              version=workflow_version,
                              task_list='default')
         )

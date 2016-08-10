@@ -170,7 +170,7 @@ class Activity(object):
             'version': data['version'],
             'input_spec': data.get('input_spec', None),
             'outputs_spec': data.get('outputs_spec', None),
-            'task_list': data.get('task_list', None),
+            'task_list': data.get('task_list', None)
         }
 
         # Copy in all SWF activity options.
@@ -178,5 +178,5 @@ class Activity(object):
                        'schedule_to_start_timeout', 'start_to_close_timeout'):
             if option in data:
                 activity_data[option] = data[option]
-
+                
         return cls(**activity_data)

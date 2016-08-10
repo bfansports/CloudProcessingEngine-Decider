@@ -58,7 +58,9 @@ def main():
 
     # Make sure the plan is registered in SWF
     register(domain=args.domain,
-             workflows=((p.name, p.version),))
+             workflows=((p.name, p.version,
+                         p.default_execution_start_to_close_timeout,
+                         p.default_task_start_to_close_timeout),))
 
     if 'OUTPUT_QUEUE' in os.environ:
         output_queue = os.environ['OUTPUT_QUEUE']

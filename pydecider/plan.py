@@ -27,6 +27,12 @@ class Plan(object):
             'version': {
                 'type': 'string',
             },
+            'default_execution_start_to_close_timeout': {
+                'type': 'string',
+            },
+            'default_task_start_to_close_timeout': {
+                'type': 'string',
+            },
             'input_spec': {
                 'oneOf': [
                     {'type': 'null'},
@@ -58,16 +64,22 @@ class Plan(object):
 
     __slots__ = ('name',
                  'version',
+                 'default_execution_start_to_close_timeout',
+                 'default_task_start_to_close_timeout',
                  'steps',
                  'activities',
                  '_input_validator',
                  '__weakref__')
 
     def __init__(self, name, version,
+                 default_execution_start_to_close_timeout,
+                 default_task_start_to_close_timeout,
                  input_spec=None, steps=(), activities=()):
-
+        
         self.name = name
         self.version = version
+        self.default_execution_start_to_close_timeout = default_execution_start_to_close_timeout
+        self.default_task_start_to_close_timeout = default_task_start_to_close_timeout
         self.steps = list(steps)
         self.activities = dict(activities)
         self._input_validator = SchemaValidator(input_spec=input_spec)
@@ -81,7 +93,7 @@ class Plan(object):
         """
         validator = SchemaValidator(cls._DATA_SCHEMA)
         validator.validate(plan_data)
-
+        
         activities = {
             activity_data['name']: Activity.from_data(activity_data)
             for activity_data in plan_data['activities']
@@ -95,6 +107,8 @@ class Plan(object):
         plan = cls(
             name=plan_data['name'],
             version=plan_data['version'],
+            default_execution_start_to_close_timeout=plan_data['default_execution_start_to_close_timeout'],
+            default_task_start_to_close_timeout=plan_data['default_task_start_to_close_timeout'],
             input_spec=plan_data.get('input_spec', None),
             steps=steps,
             activities=activities,
