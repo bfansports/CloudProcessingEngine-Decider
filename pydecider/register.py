@@ -42,7 +42,7 @@ def register(domain='test', workflows=(), activities=()):
     for swf_entity in registerables:
         try:
             swf_entity.register()
-            _LOGGER.debug('%r registered successfully', swf_entity.name)
+            _LOGGER.info('%r registered successfully', swf_entity.name)
         except (SWFDomainAlreadyExistsError, SWFTypeAlreadyExistsError):
             _LOGGER.warning('%s %r already exists',
                             swf_entity.__class__.__name__,

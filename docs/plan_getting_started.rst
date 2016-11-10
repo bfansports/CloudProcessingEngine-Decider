@@ -14,6 +14,8 @@ The most basic plan is as folow:
     ---
     name: MyWorkFlow
     version: 1.0
+    default_execution_start_to_close_timeout: "2592000"
+    default_task_start_to_close_timeout: "172800"
 
     activities:
     - name: MyAct1
@@ -35,6 +37,10 @@ Plan Attributes
 This plan specification first defines a ``name`` and a ``version`` for the Plan.
 These correspond directly the the `"Workflow name"` and `"Workflow version"`
 concepts from SWF.
+
+You must also specify the default value for both ``default_execution_start_to_close_timeout`` and ``default_task_start_to_close_timeout``
+which defines the timeout values for the workflow and its activities.
+
 
 Activities
 ~~~~~~~~~~
@@ -78,6 +84,8 @@ We can make the plan a little more interesting by adding multiple steps.
     ---
     name: MyWorkFlow
     version: 1.0
+    default_execution_start_to_close_timeout: "2592000"
+    default_task_start_to_close_timeout: "172800"
 
     activities:
     - name: MyAct1
@@ -131,7 +139,7 @@ workflow.
 Step Statuses
 -------------
 
-Until now, we have talked about steps beein `"completed"` or not. This means
+Until now, we have talked about steps beeing `"completed"` or not. This means
 that the step execution finished either successfully or failed.
 
 You can express more control over your steps' execution by specifying exactly

@@ -34,7 +34,7 @@ class SWFDecider(swf.Decider):
 
     def run(self):
         decision_task = self.poll()
-        _LOGGER.debug('Received decision task: %r', decision_task)
+        _LOGGER.info('Received decision task: %r', decision_task)
         if 'events' in decision_task:
             # Collect the entire history if there are enough events to become
             # paginated

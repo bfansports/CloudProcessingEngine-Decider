@@ -129,7 +129,7 @@ class State(object):
         """
         assert self._context is not None
         step_state = StepState(step, self._context)
-        _LOGGER.debug('Defining new step %r in state', step_state)
+        _LOGGER.info('Defining new step %r in state', step_state)
 
         # All steps are children of the root INIT_STEP step
         self._init_step.children.add(step_state)
@@ -287,7 +287,7 @@ class StepState(object):
             return
 
         # Check that all our parents are completed per the step's requirements.
-        _LOGGER.debug('Step %r requirements %r', self, self.step.requires)
+        _LOGGER.info('Step %r requirements %r', self, self.step.requires)
 
         ready = True
         for parent in self.parents:
@@ -300,7 +300,7 @@ class StepState(object):
                 continue
 
             req_status = self.step.requires[parent.name]
-            _LOGGER.debug('Checking parent %r meets requirement %r',
+            _LOGGER.info('Checking parent %r meets requirement %r',
                           parent, req_status)
 
             if not parent.status.means(req_status):

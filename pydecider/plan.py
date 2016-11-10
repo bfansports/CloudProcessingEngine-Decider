@@ -114,7 +114,7 @@ class Plan(object):
             activities=activities,
         )
 
-        _LOGGER.debug('Loaded plan %s(steps:%d activities:%d)',
+        _LOGGER.info('Loaded plan %s(steps:%d activities:%d)',
                       plan, len(steps), len(activities))
 
         return plan

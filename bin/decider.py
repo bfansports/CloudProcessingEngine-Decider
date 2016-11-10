@@ -40,7 +40,7 @@ def main():
     log_file = "/var/tmp/logs/cpe/decider.log"
     if args.log_file:
         log_file = args.log_file
-    logging.basicConfig(level=logging.DEBUG,
+    logging.basicConfig(level=logging.INFO,
                         filename=log_file)
 
     # Load the main plan data
