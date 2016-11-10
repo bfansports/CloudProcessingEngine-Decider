@@ -196,7 +196,7 @@ class TemplatedStep(Step):
     def __init__(self, name, eval_block, requires=()):
         super(TemplatedStep, self).__init__(name, requires)
         self.eval_block = jinja2.Template(eval_block)
-
+        
     def prepare(self, context):
         return self.eval_block.render(context)
 

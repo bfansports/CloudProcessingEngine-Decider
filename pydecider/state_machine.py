@@ -49,14 +49,14 @@ class StateMachine(object):
         for event in events:
             results = self._run_event(event)
 
-        _LOGGER.debug('State replayed from events: %r', self.state)
+        _LOGGER.info('State replayed from events: %r', self.state)
         return results
 
     ###########################################################################
     def _run_event(self, event):
         """Process a given event and return a list of results.
         """
-        _LOGGER.debug('Processing event %r', event['eventType'])
+        _LOGGER.info('Processing event %r', event['eventType'])
 
         handler_fun = getattr(
             self,
@@ -69,21 +69,22 @@ class StateMachine(object):
         if self.state.is_in_state('completed'):
             return []
 
-        _LOGGER.debug('Running all "ready" steps')
+        _LOGGER.info('Running all "ready" steps')
         ready_steps = self.state.step_next()
-        _LOGGER.debug('Next steps: %r', ready_steps)
+        _LOGGER.info('Next steps: %r', ready_steps)
 
         results = []
         for step in ready_steps:
             step_result = step.run()
-            _LOGGER.debug('step_result: %r', step_result)
+            _LOGGER.info('step_result: %r', step_result)
             if isinstance(step_result, ActivityStepResult):
                 results.append(step_result)
 
             elif isinstance(step_result, TemplatedStepResult):
+                #results.append(step_result)
                 raise Exception('Not implemented')
 
-        _LOGGER.debug('Results: %r', results)
+        _LOGGER.info('Results: %r', results)
         return results
 
     ###########################################################################
@@ -106,7 +107,7 @@ class StateMachine(object):
 
     def __ev_start(self, event):
         """Import input data"""
-        _LOGGER.debug('%r', event)
+        _LOGGER.info('%r', event)
         start_attrs = event['workflowExecutionStartedEventAttributes']
         # Note that if no input was provided, the 'input' key will not be there
         wf_input = start_attrs.get('input', 'null')
@@ -127,19 +128,19 @@ class StateMachine(object):
 
     def __ev_scheduled(self, event):
         """Record the eventId associated with activities we scheduled."""
-        _LOGGER.debug('%r', event)
+        _LOGGER.info('%r', event)
         step_name = event['activityTaskScheduledEventAttributes']['activityId']
         event_id = event['eventId']
 
         with self.state(event['eventId']):
             self.state.step_update(step_name, 'running')
 
-        _LOGGER.debug('Associating step %r with event_id %r',
+        _LOGGER.info('Associating step %r with event_id %r',
                       step_name, event_id)
         self._event_ids[event_id] = step_name
 
     def __ev_completed(self, event):
-        _LOGGER.debug('%r', event)
+        _LOGGER.info('%r', event)
         completed_event = event['activityTaskCompletedEventAttributes']
         output_json = completed_event.get('result', 'null')
         output = json.loads(output_json)
